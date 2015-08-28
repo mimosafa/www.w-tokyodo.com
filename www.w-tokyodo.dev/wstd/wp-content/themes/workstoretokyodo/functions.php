@@ -1,15 +1,5 @@
 <?php
 
-/**
- * 未ログインユーザーは拒否
- */
-function wstd_404_redirect() {
-	if ( is_user_logged_in() || $_SERVER['REMOTE_ADDR'] === '39.2.180.73' )
-		return;
-	wp_redirect( 'http://www.w-tokyodo.com/', '404' );
-}
-//add_action( 'init', 'wstd_404_redirect' );
-
 function wstd_301_redirect() {
 	if ( '/company' === $_SERVER['REQUEST_URI'] )
 		wp_redirect( home_url() . '#company', '301' );
@@ -121,20 +111,6 @@ add_action( 'after_setup_theme', function() {
 function workstoretokyodo_theme_setup() {
 
 	/**
-	 * Post Thumbnails
-	 */
-	add_theme_support( 'post-thumbnails' );
-
-	/**
-	 * remove action - wp_head
-	 */
-	add_action( 'template_redirect', function() {
-		if ( is_page() ) {
-			remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
-		}
-	} );
-
-	/**
 	 * default scripts and styles enqueue
 	 * - bootstrap 3.1.1
 	 * - fontawesome 4.0.3
@@ -147,8 +123,8 @@ function workstoretokyodo_theme_setup() {
 			/**
 			 * styles
 			 */
-			wp_enqueue_style( 'bootstrap', '//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css', array(), '3.1.1' );
-			wp_enqueue_style( 'font-awesone', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css', array( 'bootstrap' ), '4.0.3' );
+			wp_enqueue_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', array(), '3.3.5' );
+			wp_enqueue_style( 'font-awesone', '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', array( 'bootstrap' ), '4.0.3' );
 			wp_enqueue_style( 'wstd', get_stylesheet_uri(), array(), date( 'YmdHis', filemtime( get_stylesheet_directory() . '/style.css' ) ) );
 			// wstd icon font
 			$path = '/css/tokyodo2014.css';
@@ -158,8 +134,7 @@ function workstoretokyodo_theme_setup() {
 			 * scripts
 			 */
 			wp_enqueue_script( 'wstd', get_stylesheet_directory_uri() . '/js/script.js', array( 'jquery' ), date( 'YmdHis', filemtime( get_stylesheet_directory() . '/js/script.js' ) ), true );
-			wp_enqueue_script( 'modernizr', '//cdnjs.cloudflare.com/ajax/libs/modernizr/2.7.1/modernizr.min.js', array(), '2.7.1' );
-			wp_enqueue_script( 'bootstrap', '//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js', array( 'jquery' ), '3.1.1', true );
+			wp_enqueue_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array( 'jquery' ), '3.3.5', true );
 
 		}
 	} );
@@ -233,28 +208,6 @@ function workstoretokyodo_theme_setup() {
 		}
 	} );
 
-	/**
-	 * 固定ページに抜粋
-	 */
-	add_post_type_support( 'page', 'excerpt' );
-
-	/**
-	 * Google Analytics tracking code
-	 */
-	add_action( 'wp_head', function() {
-		if ( !is_user_logged_in() ) { ?>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', 'UA-5722525-1', 'w-tokyodo.com');
-  ga('send', 'pageview');
-
-</script><?php
-		}
-	} );
 }
 add_action( 'after_setup_theme', 'workstoretokyodo_theme_setup' );
 
