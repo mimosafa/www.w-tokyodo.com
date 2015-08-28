@@ -1,0 +1,659 @@
+@charset "utf-8";
+/*
+Theme Name: 株式会社ワークストア・トウキョウドゥ テーマ
+Theme URI: http://www.w-tokyodo.com/
+Description: 株式会社ワークストア・トウキョウドゥ 専用テーマ
+Author: mimosafa.
+Version: 0.0
+*/
+
+html {
+  min-height: 100%;
+  background-color: #f8f8ff;
+}
+body {
+  background-color: #fff;
+  font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+}
+
+/* ================================================
+areaSiteHeader & header-legacy container
+================================================ */
+#areaSiteHeader,
+#header-legacy {
+  overflow: hidden;
+}
+#areaSiteHeader .container,
+#header-legacy .container {
+  min-width: 980px;
+}
+/* ================================================
+areaSiteHeader
+================================================ */
+#areaSiteHeader {
+  background: url(./img/bg_head_top.png) left top repeat-x;
+  height: 30px;
+}
+#areaSiteHeader a,
+#areaSiteHeader span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-indent: 100%;
+  background-position: left top;
+  background-repeat: no-repeat;
+}
+#wstdLogo {
+  margin-top: 3px;
+  float: left;
+}
+#wstdLogo a {
+  background-image: url(./img/ttl_site_header.png);
+  height: 22px;
+  width: 195px;
+}
+#wstdLogo span {
+  background-image: url(./img/ttl_wstd_copy.png);
+  height: 22px;
+  width: 410px;
+}
+#areaSiteHeader ul {
+  float: right;
+  margin: 7px 0 9px;
+}
+#areaSiteHeader li {
+  float: left;
+  padding-left: 14px;
+  list-style: none;
+}
+#wstdCompany {
+  background-image: url(./img/btn_about_company.png);
+  width: 68px;
+  height: 14px;
+}
+#wstdContact {
+  background-image: url(./img/btn_contact.png);
+  width: 100px;
+  height: 14px;
+}
+
+/* ================================================
+header-legacy
+================================================ */
+#header-legacy {
+  background: url(./img/bg_wstd_nav_lgcy.png) left top repeat-x;
+}
+.division-neoponte #header-legacy {
+  background: url(./img/bg_wstd_nav_lgcy_neoponte.png) left top repeat-x;
+}
+.division-sharyobu #header-legacy {
+  background: url(./img/bg_wstd_nav_lgcy_sharyobu.png) left top repeat-x;
+}
+#siteid {
+  float: left;
+  padding: 16px 0 0;
+}
+#siteid > a,
+#siteid > h1 {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-indent: 100%;
+  font-size: 1em;
+  margin: 0;
+  background: url(./img/ttl_wstd-24.png) left top no-repeat;
+  width: 401px;
+  height: 40px;
+}
+.division-direct #siteid {
+}
+.division-direct #siteid > a,
+.division-direct #siteid > h1 {
+  background: url(./img/ttl_tokyodo.png) left top no-repeat;
+  width: 255px;
+  height: 40px;
+}
+.division-neoponte #siteid {
+}
+.division-neoponte #siteid > a,
+.division-neoponte #siteid > h1 {
+  background: url(./img/ttl_neoponte.png) left top no-repeat;
+  width: 237px;
+  height: 39px;
+}
+.division-sharyobu #siteid {
+  padding: 11px 0 0;
+}
+.division-sharyobu #siteid > a,
+.division-sharyobu #siteid > h1 {
+  background: url(./img/ttl_sharyobu.png) left top no-repeat;
+  width: 223px;
+  height: 52px;
+}
+#header-legacy ul {
+  float: right;
+  margin-bottom: 0;
+}
+#header-legacy ul li {
+  float: left;
+  width: 120px;
+  height: 69px;
+  list-style: none;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+}
+#header-legacy ul li a,
+#header-legacy ul li span {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-indent: 100%;
+  width: 100%;
+  height: 100%;
+  background-position: left top;
+  background-repeat: no-repeat;
+}
+#header-legacy ul li:hover {
+  filter: alpha(opacity=70);
+  -moz-opacity: .7;
+  opacity: .7;
+}
+#header-legacy ul li.now-on-display {
+  white-space: nowrap;
+  overflow: hidden;
+  text-indent: 100%;
+  background-repeat: no-repeat;
+  border-bottom-style: solid;
+  border-bottom-width: 5px;
+}
+#header-legacy ul li.now-on-display:hover {
+  filter: alpha(opacity=100);
+  -moz-opacity: 1;
+  opacity: 1;
+}
+#btn-tokyodo {
+  background-image: url(./img/bg_wstd_nav_lgcy.png);
+}
+#btn-tokyodo > a {
+  background-image: url(./img/btn_tokyodo.png);
+}
+#btn-tokyodo.now-on-display {
+  background-image: url(./img/btn_tokyodo_on.png);
+  border-color: #0090ff;
+}
+#btn-neostall {
+  background-image: url(./img/bg_wstd_nav_lgcy_neoyatai.png);
+}
+#btn-neostall > a {
+  background-image: url(./img/btn_neoyatai.png);
+}
+#btn-neostall.now-on-display {
+  background-image: url(./img/btn_neoyatai_on.png);
+  border-color: #ffa100;
+}
+#btn-neoponte {
+  background-image: url(./img/bg_wstd_nav_lgcy_neoponte.png);
+}
+#btn-neoponte > a {
+  background-image: url(./img/btn_neoponte.png);
+}
+#btn-neoponte.now-on-display {
+  background-image: url(./img/btn_neoponte_on.png);
+  border-color: #00ff5d;
+}
+#btn-sharyobu {
+  background-image: url(./img/bg_wstd_nav_lgcy_sharyobu.png);
+}
+#btn-sharyobu > a {
+  background-image: url(./img/btn_sharyobu.png);
+}
+#btn-sharyobu.now-on-display {
+  background-image: url(./img/btn_sharyobu_on.png);
+  border-color: #ff2d34;
+}
+
+/* ==========================
+Bootstrap Table
+========================== */
+.table-hover tbody tr:hover > th[rowspan] {
+  background-color: transparent;
+}
+.table:not(.table-bordered) > tbody:first-child > tr:first-child > th,
+.table:not(.table-bordered) > tbody:first-child > tr:first-child > td {
+  border-top: none;
+}
+.table tbody:first-child > tr th:first-child {
+  width: 20%;
+  white-space: nowrap;
+}
+
+/* ======================
+記事本文
+====================== */
+.hentry {
+  letter-spacing: .1em;
+}
+.hentry img {
+  max-width: 100%;
+  height: auto;
+}
+.division-sharyobu.division-top .hentry.division-child-page p {
+  font-size: 13px;
+  line-height: 1.9em;
+}
+
+/* =======================
+header image
+======================= */
+.wstd-header-image {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+}
+.wstd-header-image > h2 {
+  position: absolute;
+  left: 0;
+  bottom: 15px;
+  padding: 15px 30px;
+  background-color: rgba(0,14,25,0.85);
+  color: #fff;
+  font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  letter-spacing: .1em
+}
+#kokokara {
+  position: absolute;
+  top: 47%;
+  right: 20px;
+  font-size: 49px;
+  font-weight: 700;
+  font-family: 'Hiragino Mincho ProN', serif;
+  line-height: 1;
+  text-shadow: 0 2px 10px #111,
+               0 2px 14px #000,
+               0 2px 8px #000,
+               0 0 30px #666;
+  color: #efefef;
+  text-align: right;
+}
+#kokokara > small {
+  font-size: 28px;
+}
+
+/* ================
+Home
+================ */
+.home .wstd-header-image {
+  background-position: top center;
+}
+@media (min-width: 991px) {
+  .home .wstd-header-image {
+    height: 500px;
+  }
+}
+.home #wstd-contents {
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 0;
+  padding-left: 0;
+  width: auto;
+}
+.home #wstd-contents p {
+  line-height: 1.9;
+  letter-spacing: .1em;
+}
+.home .wstd-home-image {
+  background-repeat: no-repeat;
+  height: 500px;
+}
+.home .wstd-home-description {
+  padding-top: 80px;
+  padding-bottom: 90px;
+  position: relative;
+}
+.home .wstd-home-description > a {
+  position: absolute;
+  display: block;
+  height:100%;
+  font-size: 100px;
+  line-height: 1;
+  right: 50px;
+  top: 50%;
+  margin-top: -50px;
+  color: #f8f8ff;
+  opacity: 0;
+  -webkit-transition: all 1s;
+  transition: all 1s;
+}
+.home .wstd-home-description:hover > a {
+  opacity: .7;
+  right: 40px;
+}
+#wstd-home-philosophy {
+  padding-top: 275px;
+  padding-bottom: 80px;
+  background: url(./img/tokyodo-cars.png) no-repeat center 80px;
+}
+#direct .wstd-home-image {
+  background-image: url(./img/ss.jpg);
+  background-size: cover;
+  background-position: center;
+}
+#direct .wstd-home-description {
+  background-color: #0068b7;
+  color: #fff;
+}
+#neostall .wstd-home-image {
+  background-image: url(./img/forum-spring.jpg);
+  background-size: cover;
+  background-position: center;
+}
+#neostall .wstd-home-description {
+  background-color: #ff7f00;
+  color: #fff;
+}
+#neoponte {
+  background-image: url(./img/ramen-bg.jpg);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+#neoponte .wstd-home-image {
+  background-image: url(./img/ramen.png);
+  background-position: 15px 50px;
+}
+#neoponte .wstd-home-description {
+  background-color: #004060;
+  color: #fff;
+}
+#sharyobu {
+  background-image: url(./img/N853_hamusuteddokaiga.jpg);
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+  background-position: 0 -110px;
+  background-color: #999;
+}
+#sharyobu .wstd-home-image {
+  background-image: url(./img/bb.png);
+  /*background-color: #f5f5f5;*/
+  background-position-x: 97%;
+  background-position-y: 177%;
+}
+#sharyobu .wstd-home-description {
+  background-color: #c02227;
+  color: #fff;
+}
+#company table {
+  letter-spacing: .1em;
+}
+
+/* =======================
+background full width
+======================= */
+.container-fluid .bg-full-width {
+}
+.division-top .container-fluid .bg-full-width {
+  margin: 0 -15px;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* =======================
+wstd footer
+======================= */
+#wstd-footer {
+  margin-top: 60px;
+  padding-top: 70px;
+  background-color: #f8f8ff;
+}
+.home #wstd-footer {
+  margin-top: 0;
+}
+#wstd-footer-inner {
+  text-align: center;
+  font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+}
+#wstd-marks {
+  margin-bottom: 55px;
+}
+#wstd-marks a {
+  display: block;
+  height: 125px;
+  overflow: hidden;
+  font-size: 100px;
+  color: #eee;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+@media (max-width: 991px) {
+  #wstd-marks a {
+    font-size: 85px;
+  }
+}
+#wstd-marks a:hover {
+    color: #333;
+    text-decoration: none;
+}
+#wstd-footer-inner > nav,
+#wstd-footer-inner > p {
+  font-size: .85em;
+}
+#wstd-footer-inner > nav a {
+  color: #888;
+  letter-spacing: .1em;
+  -webkit-transition: all .5s;
+  transition: all .5s;
+}
+#wstd-footer-inner > nav a:hover {
+  color: #333;
+  text-decoration: none;
+}
+
+/* ================
+child-page wp-post-image
+================ */
+.child-page-image {
+  padding-top: 40px;
+}
+.wp-post-image {
+  max-width: 100%;
+  height: auto;
+}
+@media (max-width: 991px) and (min-width: 768px) {
+  .child-page-image {
+    padding-top: 95px;
+  }
+}
+@media (max-width: 767px) {
+  .child-page-image {
+    padding-top: 5px;
+  }
+  .wp-post-image {
+    min-width: 100%;
+  }
+}
+
+/* ======================
+sidebar menu
+====================== */
+.wstd-sidebar-menu {
+  margin-top: 20px;
+  font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-size: 16px;
+}
+.wstd-sidebar-menu li {
+}
+.wstd-sidebar-menu a {
+  color: #333;
+}
+.wstd-sidebar-menu > li {
+  margin-bottom: 12px;
+}
+.wstd-sidebar-menu > li:before {
+  background: none repeat scroll 0 0 #aaa;
+  box-shadow: 0 15px 10px #aaa;
+  content: "";
+  position: absolute;
+  right: 5px;
+  bottom: 18px;
+  top: 45%;
+  transform: rotate(3deg);
+  -webkit-transform: rotate(3deg);
+  -moz-transform: rotate(3deg);
+  -ms-transform: rotate(3deg);
+  -outline-width: width: 50%;
+  width: 50%;
+  max-width: 75%;
+  height: 5px;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+}
+.wstd-sidebar-menu > li:hover:before {
+  top: 40%;
+  transform: rotate(0);
+  -webkit-transform: rotate(0);
+  -moz-transform: rotate(0);
+  -ms-transform: rotate(0);
+}
+.wstd-sidebar-menu > li > a {
+  background-color: ghostwhite;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+}
+
+/* =================
+breadcrumb
+================= */
+.breadcrumb {
+  background-color: transparent;
+  padding-left: 3px;
+  font-family: 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-size: .85em;
+  color: #666;
+}
+
+/* ==================
+Scroll to top
+================== */
+#wstd-scroll-top {
+  font-size: 75px;
+  text-align: center;
+  position: fixed;
+  width: 100%;
+  /*bottom*/top: 0;
+  cursor: pointer;
+  display: none;
+}
+#wstd-scroll-top > i {
+  color: #d3d3d3;
+  opacity: .5;
+  transition: all .2s;
+}
+#wstd-scroll-top:hover > i {
+  color: #fff;
+  text-shadow: 0 0 4px #c0c0c0, 0 0 16px #a9a9a9;
+  opacity: .9;
+}
+
+/* ===================
+contactform7
+=================== */
+div.wpcf7 {
+  padding-top: 24px;
+}
+.wpcf7 dd {
+  margin-bottom: 16px;
+}
+.wpcf7 span.label-warning {
+  margin-left: .5em;
+}
+.wpcf7 input,
+.wpcf7 textarea {
+  max-width: 100%;
+}
+.nav-tabs a.lunch,
+.nav-tabs a.promotion,
+.nav-tabs a.join {
+  color: #f39700;
+}
+.nav-tabs a.car {
+  color: #c02026;
+}
+.nav-tabs a.ponte {
+  color: #14a73a;
+}
+#wstd-contacts .tooltip > .tooltip-inner {
+  line-height: 1.75;
+  letter-spacing: .1em;
+  text-align: left;
+  padding: 12px;
+}
+#wstd-contacts a.lunch + .tooltip > .tooltip-inner,
+#wstd-contacts a.promotion + .tooltip > .tooltip-inner,
+#wstd-contacts a.join + .tooltip > .tooltip-inner {
+  background-color: #ff4500;
+}
+#wstd-contacts a.lunch + .tooltip > .tooltip-arrow,
+#wstd-contacts a.promotion + .tooltip > .tooltip-arrow,
+#wstd-contacts a.join + .tooltip > .tooltip-arrow {
+  border-bottom-color: #ff4500;
+}
+#wstd-contacts a.car + .tooltip > .tooltip-inner {
+  background-color: #c02026;
+}
+#wstd-contacts a.car + .tooltip > .tooltip-arrow {
+  border-bottom-color: #c02026;
+}
+#wstd-contacts a.ponte + .tooltip > .tooltip-inner {
+  background-color: #14a73a;
+}
+#wstd-contacts a.ponte + .tooltip > .tooltip-arrow {
+  border-bottom-color: #14a73a;
+}
+#wstd-contacts a.event + .tooltip > .tooltip-inner {
+  background-color: #0067b6;
+}
+#wstd-contacts a.event + .tooltip > .tooltip-arrow {
+  border-bottom-color: #0067b6;
+}
+
+/* ==============
+utilities
+============== */
+.linked-box {
+  cursor: pointer;
+}
+
+/* =============
+gallery
+============= */
+.wstd-gallery .gallery-item {
+  width: 50%;
+  float: left;
+  margin-bottom: 0;
+}
+.wstd-gallery .gallery-item:nth-child(1) > dt > img {
+  border-top-left-radius: 6px;
+}
+.wstd-gallery .gallery-item:nth-child(2) > dt > img {
+  border-top-right-radius: 6px;
+}
+.wstd-gallery .gallery-item:nth-child(4) > dt > img {
+  border-bottom-left-radius: 6px;
+}
+.wstd-gallery .gallery-item:nth-child(5) > dt > img {
+  border-bottom-right-radius: 6px;
+}
+
+.wstd-gallery {
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.wstd-gallery > img {
+  width: 50%;
+  float: left;
+}
+
+.page-desc {
+  margin-bottom: 20px;
+}
