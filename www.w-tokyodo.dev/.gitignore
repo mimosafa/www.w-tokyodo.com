@@ -1,0 +1,5 @@
+/*
+!/.gitignore
+!/wp-content/
+!/composer.json
+!/composer.lock
