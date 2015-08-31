@@ -1,8 +1,7 @@
 <?php
-/*
-Plugin Name: Workstore Tokyo Do Switch Environment
-Author: Toshimichi Mimoto
-*/
+/**
+ * Switch Environment
+ */
 
 class WSTD_Switch_ENV {
 

@@ -1,8 +1,7 @@
 <?php
-/*
-Plugin Name: Workstore Tokyo Do Immutable Settings
-Author: Toshimichi Mimoto
-*/
+/**
+ * Immutable Settings
+ */
 
 add_action( 'after_setup_theme', 'wstd_immutable_settings' );
 
