@@ -35,12 +35,14 @@ class wstd_division {
 			$obj = get_post( $anc[count($anc) - 1] );
 		else
 			$obj = get_post( $id );
-		if ( !in_array( $obj->post_name, self::$divisions ) )
-			return null;
-		if ( '' === $return )
-			return $obj;
-		else
-			return $obj->$return;
+		if ( $obj ) {
+			if ( !in_array( $obj->post_name, self::$divisions ) )
+				return null;
+			if ( '' === $return )
+				return $obj;
+			else
+				return $obj->$return;
+		}
 	}
 
 	static function is_division( $division = '' ) {
