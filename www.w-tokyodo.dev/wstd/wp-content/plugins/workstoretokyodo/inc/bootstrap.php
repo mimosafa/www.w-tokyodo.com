@@ -8,8 +8,6 @@ define( 'WSTD_OPTGROUP', 'workstoretokyodo' );
 
 class Bootstrap extends Singleton {
 
-	private $current_env;
-
 	protected function __construct() {
 		$this->define_environment();
 		$this->init();
