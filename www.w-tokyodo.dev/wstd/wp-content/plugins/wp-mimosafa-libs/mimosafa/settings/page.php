@@ -84,7 +84,7 @@ class Page {
 	 * @param  string $page
 	 * @param  string $page_title Optional
 	 * @param  string $menu_title Optional
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function init( $page, $page_title = null, $menu_title = null ) {
 		$this->_init_page();
@@ -96,7 +96,7 @@ class Page {
 			if ( ! $this->toplevel )
 				$this->toplevel = $page;
 			if ( $page_title )
-				$this->title( $page_title );
+				$this->page_title( $page_title );
 			if ( $menu_title )
 				$this->menu_title( $menu_title );
 		}
@@ -110,7 +110,7 @@ class Page {
 	 *
 	 * @param  string $section_id
 	 * @param  string $section_title Optional. if blank, string made from section_id. if want to hide set empty string ''.
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function section( $section_id, $section_title = null ) {
 		$this->_init_section();
@@ -130,7 +130,7 @@ class Page {
 	 *
 	 * @param  string $field_id
 	 * @param  string $field_title Optional.
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function field( $field_id, $field_title = null ) {
 		$this->_init_field();
@@ -151,7 +151,7 @@ class Page {
 	 * @param  string   $option
 	 * @param  callable $callback Optional.
 	 * @param  array    $arguments Optional.
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function option( $option, $callback = null, $sanitize = null, $arguments = [] ) {
 		if ( ! $option = filter_var( $option ) )
@@ -176,7 +176,7 @@ class Page {
 	 *
 	 * @param  string|callable $callback
 	 * @param  array           $arguments Optional.
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function callback( $callback, $sanitize = null, $arguments = [] ) {
 		if ( is_string( $callback ) && method_exists( __CLASS__, $callback ) )
@@ -204,7 +204,7 @@ class Page {
 	 *
 	 * @param  callable $sanitize
 	 * @param  array    $arguments Optional.
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function sanitize( callable $sanitize, $arguments = [] ) {
 		if ( ! $cache =& $this->getCache( 'field' ) )
@@ -218,12 +218,19 @@ class Page {
 	}
 
 	/**
+	 * @access public
+	 */
+	public function __call( $name, $params ) {
+		return $this->misc( [ $name => $params[0] ] );
+	}
+
+	/**
 	 * Set other argument
 	 *
 	 * @access public
 	 *
 	 * @param  array $args
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function misc( Array $args, $key = null ) {
 		if ( ! $key || ! in_array( $key, [ 'page', 'section', 'field' ] ) )
@@ -240,29 +247,29 @@ class Page {
 	}
 
 	/**
-	 * Set title
+	 * Set Page Title
 	 *
 	 * @access public
 	 *
-	 * @param  string $title
-	 * @return DDBBD\Settings\Page
+	 * @param  string $page_title
+	 * @return mimosafa\WP\Settings\Page
 	 */
-	public function title( $title ) {
-		if ( ! $title = filter_var( $title ) )
+	public function page_title( $page_title ) {
+		if ( ! $page_title = filter_var( $page_title ) )
 			return;
 		if ( ! $cache =& $this->getCurrentCache() )
 			return;
-		$cache['title'] = $title;
+		$cache['page_title'] = $page_title;
 		return $this;
 	}
 
 	/**
-	 * Set menu title
+	 * Set Menu Title
 	 *
 	 * @access public
 	 *
 	 * @param  string $menu_title
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function menu_title( $menu_title ) {
 		if ( ! $menu_title = filter_var( $menu_title ) )
@@ -279,7 +286,7 @@ class Page {
 	 * @access public
 	 *
 	 * @param  string $capability
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function capability( $capability ) {
 		if ( ! $capability = filter_var( $capability ) )
@@ -294,7 +301,7 @@ class Page {
 	 * Set icon url
 	 *
 	 * @param  string $icon_url
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function icon_url( $icon_url ) {
 		if ( ! $icon_url = filter_var( $icon_url ) )
@@ -309,7 +316,7 @@ class Page {
 	 * Set position in admin menu
 	 *
 	 * @param  integer $position
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function position( $position ) {
 		if ( ! $position = filter_var( $position, \FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 1 ] ] ) )
@@ -326,7 +333,7 @@ class Page {
 	 * @access public
 	 *
 	 * @param  string $text
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function description( $text ) {
 		if ( ! $text = filter_var( $text ) )
@@ -350,7 +357,7 @@ class Page {
 	 *
 	 * @param  string $html
 	 * @param  boolean $wrap_div Optional. if true wrap $html by 'div'
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function html( $html, $wrap_div = false ) {
 		if ( ! $html = filter_var( $html ) )
@@ -373,7 +380,7 @@ class Page {
 	 * @param  string  $path
 	 * @param  array   $args
 	 * @param  boolean $wrap_div Optional. if true wrap $html by 'div'
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function file( $path, $args = [], $wrap = false ) {
 		if ( ( ! $realPath = realpath( $path ) ) || $realPath != $path )
@@ -395,7 +402,7 @@ class Page {
 	 * @access public
 	 *
 	 * @param  string $text
-	 * @return DDBBD\Settings\Page
+	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function submit_button( $text ) {
 		//
@@ -488,28 +495,28 @@ class Page {
 	 *
 	 * @global array $admin_page_hook
 	 *
-	 * @param  array $page_arg
+	 * @param  array $page_args
 	 * @return void
 	 */
-	private function _add_page( Array $page_arg ) {
+	private function _add_page( Array $page_args ) {
 		global $admin_page_hooks;
-		extract( $page_arg ); // $page must be generated.
+		extract( $page_args ); // $page must be generated.
 		/**
 		 * Avoid duplicate page body display
 		 */
 		if ( array_key_exists( $page, $admin_page_hooks ) )
 			return;
-		if ( ! isset( $title ) ) {
-			$title = ucwords( trim( str_replace( [ '-', '_', '/', '.php' ], ' ', $page ) ) );
-			$page_arg['title'] = $title;
+		if ( ! isset( $page_title ) ) {
+			$page_title = ucwords( trim( str_replace( [ '-', '_', '/', '.php' ], ' ', $page ) ) );
+			$page_args['page_title'] = $page_title;
 		}
 		if ( ! isset( $menu_title ) ) {
-			$menu_title = $title;
-			$page_arg['menu_title'] = $menu_title;
+			$menu_title = $page_title;
+			$page_args['menu_title'] = $menu_title;
 		}
 		if ( ! isset( $capability ) ) {
 			$capability = 'manage_options';
-			$page_arg['capability'] = $capability;
+			$page_args['capability'] = $capability;
 		}
 		if ( ! isset( $callback ) ) {
 			if ( isset( $sections ) || isset( $fields ) || isset( $html ) || isset( $description ) ) {
@@ -525,7 +532,7 @@ class Page {
 			}
 		}
 		else
-			unset( $page_arg['callback'] ); // Optimize vars
+			unset( $page_args['callback'] ); // Optimize vars
 		if ( $page === $this->toplevel && ! array_key_exists( $page, $admin_page_hooks ) ) {
 			if ( ! isset( $icon_url ) )
 				$icon_url = '';
@@ -534,12 +541,12 @@ class Page {
 			/**
 			 * Add as top level page
 			 */
-			add_menu_page( $title, $menu_title, $capability, $page, $callback, $icon_url, $position );
+			add_menu_page( $page_title, $menu_title, $capability, $page, $callback, $icon_url, $position );
 		} else {
 			/**
 			 * Add as sub page
 			 */
-			add_submenu_page( $this->toplevel, $title, $menu_title, $capability, $page, $callback );
+			add_submenu_page( $this->toplevel, $page_title, $menu_title, $capability, $page, $callback );
 		}
 		/**
 		 * Sections
@@ -548,7 +555,7 @@ class Page {
 			foreach ( $sections as $section ) {
 				$this->_add_section( $section, $page );
 			}
-			unset( $page_arg['sections'] ); // Optimize vars
+			unset( $page_args['sections'] ); // Optimize vars
 		}
 		/**
 		 * fields
@@ -557,13 +564,13 @@ class Page {
 			foreach ( $fields as $field ) {
 				$this->_add_field( $field, $page );
 			}
-			unset( $page_arg['fields'] ); // Optimize vars
+			unset( $page_args['fields'] ); // Optimize vars
 		}
 		/**
 		 * Cache argument for callback method
 		 */
 		$argsKey = $this->hash . '_page_' . $page;
-		self::$arguments[$argsKey] = $page_arg;
+		self::$arguments[$argsKey] = $page_args;
 	}
 
 	/**
@@ -660,7 +667,7 @@ class Page {
 		if ( ! $arg = self::$arguments[$this->hash . '_page_' . $menu_slug] )
 			return;
 		echo '<div class="wrap">';
-		echo "<h2>{$arg['title']}</h2>";
+		echo "<h2>{$arg['page_title']}</h2>";
 		if ( isset( $arg['has_option_fields'] ) ) {
 			/**
 			 * @see http://wpcj.net/354
@@ -698,7 +705,7 @@ class Page {
 		$args = self::$arguments[$this->hash . '_page_' . $menu_slug];
 		$path = $args['file_path'];
 		$wrap = $args['wrap_included_file'];
-		$title = $wrap && isset( $args['title'] ) ? $args['title'] : '';
+		$title = $wrap && isset( $args['page_title'] ) ? $args['page_title'] : '';
 		if ( $args = self::$arguments['page_' . $menu_slug]['include_file_args'] )
 			extract( $args );
 		echo $wrap ? '<div class="wrap">' : '';
@@ -728,33 +735,54 @@ class Page {
 	 * Drow form element Checkbox
 	 */
 	public function checkbox( Array $args ) {
-		if ( ! isset( $args['option'] ) )
-			return;
-		$option = esc_attr( $args['option'] );
-		$checked = \get_option( $option ) ? 'checked="checked" ' : '';
-		$label = isset( $args['label'] ) ? $args['label'] : '';
+		static $def = [
+			'id'          => \FILTER_DEFAULT,
+			'option'      => \FILTER_DEFAULT,
+			'label'       => \FILTER_DEFAULT,
+			'description' => \FILTER_DEFAULT,
+			'html'        => \FILTER_DEFAULT,
+		];
+		$args = filter_var_array( $args, $def );
+		extract( $args );
+		if ( $id && $option ) {
 ?>
-<label for="<?php echo $option; ?>">
-	<input type="checkbox" name="<?php echo $option; ?>" id="<?php echo $option; ?>" value="1" <?php echo $checked ?>/>
-	<?php echo $label; ?>
+<label for="<?= esc_attr( $id ) ?>">
+	<input type="checkbox" name="<?= esc_attr( $option) ?>" id="<?= esc_attr( $id ) ?>" value="1"<?php checked( get_option( $option) ); ?>>
+	<?= $label ?>
 </label>
+<?= $description ?>
+<?= $html ?>
 <?php
-		if ( isset( $args['description'] ) )
-			echo $args['description'];
+		}
 	}
 
 	/**
 	 * Drow form element Imput Text
 	 */
 	public function text( Array $args ) {
-		if ( ! isset( $args['option'] ) )
-			return;
-		$option = esc_attr( $args['option'] );
+		static $def = [
+			'id'          => \FILTER_DEFAULT,
+			'option'      => \FILTER_DEFAULT,
+			'size'        => [ 'filter' => \FILTER_VALIDATE_INT, 'options' => [ 'min_range' => 1 ] ],
+			'description' => \FILTER_DEFAULT,
+			'html'        => \FILTER_DEFAULT
+		];
+		$args = filter_var_array( $args, $def );
+		extract( $args );
+		if ( $id && $option ) {
+			$attr = '';
+			if ( $size ) {
+				$attr .= ' size="' . $size . '"';
+			}
+			if ( ! $attr ) {
+				$attr .= ' class="regular-text"';
+			}
 ?>
-<input type="text" name="<?php echo $option; ?>" id="<?php echo $option; ?>" value="<?php form_option( $option ); ?>" class="regular-text" />
+<input type="text" name="<?= esc_attr( $option ) ?>" id="<?= esc_attr( $id) ?>" value="<?php form_option( $option ); ?>"<?= $attr ?>>
+<?= $description ?>
+<?= $html ?>
 <?php
-		if ( isset( $args['description'] ) )
-			echo $args['description'];
+		}
 	}
 
 	/**

@@ -6,7 +6,14 @@ class Settings extends Base {
 	protected $order = 9999;
 
 	protected function define_options() {
+		$this->org_options();
 		$this->general_options();
+	}
+
+	private function org_options() {
+		$this->opts
+			->add( 'orgname' )
+		;
 	}
 
 	private function general_options() {
@@ -17,15 +24,27 @@ class Settings extends Base {
 	}
 
 	protected function init() {
-		if ( $this->opts->get_org_name_local() && $this->opts->get_admin_ttl() ) {
-			define( 'COWP_MENU_TITLE', esc_html( $this->opts->get_orgname() ) );
+		$actProf = $this->opts->get_activate_profile();
+		$actDivi = $this->opts->get_activate_division();
+		if ( $actProf || $actDivi ) {
+			define( 'COWP_MENU_ID', 'cowp' );
+		}
+		if ( $actProf ) {
+			Profile::getInstance();
 		}
 	}
 
 	public function settings_page( $page ) {
+		if ( COWP_MENU_ID === 'cowp' ) {
+			$page->init( 'cowp-settings', 'General Settings', 'Settings' );
+		} else if ( COWP_MENU_ID === 'cowp-settings' ) {
+			$page->page_title( 'General Settings' );
+		}
 		$page
-		->init( 'cowp-settings', 'General Settings', 'Settings' )
-			->section( 'general' )
+			->section( 'organization', 'Organization Settings' )
+				->field( 'orgname', 'Organization Name' )
+					->option( $this->opts->orgname, 'text' )
+			->section( 'available-features', 'Available Features' )
 				->field( 'activate_profile' )
 					->option( $this->opts->activate_profile, 'checkbox' )
 				->field( 'activate_division' )
