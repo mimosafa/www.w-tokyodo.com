@@ -137,7 +137,7 @@ class Page {
 		if ( ! $field_id = filter_var( $field_id ) )
 			return;
 		$cache =& $this->getCache( 'field' );
-		$cache = [ 'id' => $field_id ];
+		$cache = [ 'id' => $field_id, 'label_for' => $field_id ];
 		if ( $field_title = filter_var( $field_title ) )
 			$cache['title'] = $field_title;
 		return $this;
