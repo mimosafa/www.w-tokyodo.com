@@ -1,6 +1,14 @@
 <?php
 namespace WProfile;
 use mimosafa\WP as WP;
+
+/**
+ * WProfile Plugin Bootstrap Class
+ *
+ * @package WordPress
+ * @subpackage WProfile
+ * @author Toshimichi Mimoto <mimosafa@gmail.com>
+ */
 class Bootstrap extends Singleton {
 	protected function __construct() {
 		$this->init();
@@ -16,7 +24,7 @@ class Bootstrap extends Singleton {
 			define( 'WPROFILE_MENU_ID', 'wprofile-settings' );
 		}
 		if ( ! defined( 'WPROFILE_MENU_TITLE' ) ) {
-			define( 'WPROFILE_MENU_TITLE', 'WProfile' );
+			define( 'WPROFILE_MENU_TITLE', __( 'WProfile', 'wprofile' ) );
 		}
 		if ( ! defined( 'WPROFILE_MENU_ICON' ) ) {
 			define( 'WPROFILE_MENU_ICON', 'dashicons-id-alt' );
