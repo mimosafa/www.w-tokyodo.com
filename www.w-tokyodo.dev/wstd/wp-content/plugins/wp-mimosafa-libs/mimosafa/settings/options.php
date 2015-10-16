@@ -4,6 +4,8 @@ namespace mimosafa\WP\Settings;
 /**
  * WordPress Options API interface class
  *
+ * @access public
+ *
  * @package WordPress
  * @subpackage WordPress Libraries by mimosafa
  *
@@ -30,7 +32,7 @@ class Options {
 	private $_keys = [];
 
 	/**
-	 * Instance getter (Singleton Pattern)
+	 * Get Instance (Singleton Pattern)
 	 *
 	 * @access public
 	 *
@@ -38,11 +40,24 @@ class Options {
 	 * @return mimosafa\WP\Settings\Options
 	 */
 	public static function instance( $group ) {
-		if ( ! self::isSanitizedString( $group ) )
-			return;
-		if ( ! isset( self::$_instances[$group] ) )
+		if ( ! self::instanceExists( $group ) ) {
 			self::$_instances[$group] = new self( $group );
+		}
 		return self::$_instances[$group];
+	}
+
+	public static function instanceExists( $group ) {
+		if ( ! self::isSanitizedString( $group ) ) {
+			throw new \Exception( 'Invalid Paramator' );
+		}
+		return isset( self::$_instances[$group] );
+	}
+
+	private static function isSanitizedString( $string ) {
+		if ( ! $string || ! is_string( $string ) || $string[0] === '_' ) {
+			return false;
+		}
+		return $string === sanitize_key( $string );
 	}
 
 	/**
@@ -67,13 +82,15 @@ class Options {
 	 * @return mimosafa\WP\Settings\Options
 	 */
 	public function add( $option, $filter = null ) {
-		if ( ! self::isSanitizedString( $option ) )
+		if ( ! self::isSanitizedString( $option ) ) {
 			return false;
+		}
 		if ( $filter ) {
-			if ( method_exists( __CLASS__, 'option_filter_' . $filter ) )
+			if ( method_exists( __CLASS__, 'option_filter_' . $filter ) ) {
 				$filter_cb = [ $this, 'option_filter_' . $filter ];
-			else if ( is_callable( $filter ) )
+			} else if ( is_callable( $filter ) ) {
 				$filter_cb = $filter;
+			}
 		}
 		$this->_keys[$option] = isset( $filter_cb ) ? $filter_cb : null;
 		return $this;
@@ -111,13 +128,6 @@ class Options {
 		endif;
 	}
 
-	private static function isSanitizedString( $string ) {
-		if ( ! $string || ! is_string( $string ) || $string[0] === '_' )
-			return false;
-		$sanitized = sanitize_key( $string );
-		return $string === $sanitized;
-	}
-
 	/**
 	 * Option getter
 	 * - If the option dose not exists, return null value
@@ -131,13 +141,15 @@ class Options {
 	private function get() {
 		$args = func_get_args();
 		$key = $args[0];
-		if ( ! array_key_exists( $key, $this->_keys ) )
+		if ( ! array_key_exists( $key, $this->_keys ) ) {
 			return null;
+		}
 		$subkey =  isset( $args[1] ) && filter_var( $args[1] ) ? $args[1] : null;
 		$key .= $subkey ? '_' . $subkey : '';
 		if ( ! $value = wp_cache_get( $key, $this->_cache_group ) ) {
-			if ( $value = get_option( $this->_prefix . $key, null ) )
+			if ( $value = get_option( $this->_prefix . $key, null ) ) {
 				wp_cache_set( $key, $value, $this->_cache_group );
+			}
 		}
 		// for Test
 		$value = apply_filters( $this->_prefix . 'options_get_' . $args[0], $value, $subkey );
@@ -168,11 +180,13 @@ class Options {
 		}
 		if ( $filter = $this->_keys[$key] ) {
 			$newvalue = call_user_func( $filter, $newvalue );
-			if ( ! isset( $newvalue ) )
+			if ( ! isset( $newvalue ) ) {
 				return null;
+			}
 		}
-		if ( $oldvalue === $newvalue )
+		if ( $oldvalue === $newvalue ) {
 			return false;
+		}
 		$key .= isset( $subkey ) ? '_' . $subkey : '';
 		wp_cache_delete( $key, $this->_cache_group );
 		return update_option( $this->_prefix . $key, $newvalue );
@@ -190,10 +204,12 @@ class Options {
 	private function delete() {
 		$args = func_get_args();
 		$key = $args[0];
-		if ( ! array_key_exists( $key, $this->_keys ) )
+		if ( ! array_key_exists( $key, $this->_keys ) ) {
 			return null;
-		if ( isset( $args[1] ) && filter_var( $args[1] ) )
+		}
+		if ( isset( $args[1] ) && filter_var( $args[1] ) ) {
 			$key .= '_' . $args[1];
+		}
 		wp_cache_delete( $key, $this->_cache_group );
 		return delete_option( $this->_prefix . $key );
 	}
@@ -231,8 +247,9 @@ class Options {
 	}
 
 	private function option_key( $option ) {
-		if ( $this->_prefix !== substr( $option, 0, strlen( $this->_prefix ) ) )
+		if ( $this->_prefix !== substr( $option, 0, strlen( $this->_prefix ) ) ) {
 			return false;
+		}
 		$key = substr( $option, strlen( $this->_prefix ) );
 		$subkey = '';
 		if ( ! array_key_exists( $key, $this->_keys ) ) {
@@ -243,8 +260,9 @@ class Options {
 					break;
 				}
 			}
-			if ( ! $subkey )
+			if ( ! $subkey ) {
 				return false;
+			}
 		}
 		return [ 'key' => $key, 'subkey' => $subkey ];
 	}

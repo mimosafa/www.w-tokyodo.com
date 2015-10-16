@@ -47,7 +47,7 @@ class Settings extends Base {
 	}
 	public function settings_page( $page ) {
 		if ( WPROFILE_MENU_ID === 'wprofile' ) {
-			$page->init( 'wprofile-settings' )->menu_title( __( 'Settings', 'wprofile' ) );
+			$page->page( 'wprofile-settings' )->menu_title( __( 'Settings', 'wprofile' ) );
 		}
 		$page
 		->title( __( 'WProfile General Settings', 'wprofile' ) )

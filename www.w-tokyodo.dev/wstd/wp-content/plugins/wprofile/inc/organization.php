@@ -5,7 +5,7 @@ class Organization extends Base {
 	protected function init() {}
 	public function settings_page( $page ) {
 		$page
-			->init( 'org-profile', __( 'Organization Profile', 'wprofile' ) )
+			->page( 'org-profile', __( 'Organization Profile', 'wprofile' ) )
 		;
 		return $page;
 	}
