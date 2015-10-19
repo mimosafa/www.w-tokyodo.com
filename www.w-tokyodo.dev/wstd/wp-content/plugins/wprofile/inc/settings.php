@@ -46,6 +46,7 @@ class Settings extends Base {
 		;
 	}
 	public function settings_page( $page ) {
+		/*
 		if ( WPROFILE_MENU_ID === 'wprofile' ) {
 			$page->page( 'wprofile-settings' )->menu_title( __( 'Settings', 'wprofile' ) );
 		}
@@ -70,6 +71,7 @@ class Settings extends Base {
 			->field( 'activate-extension' )
 				->option( $this->opts->activate_extension, 'checkbox' )
 		;
+		*/
 		return $page;
 	}
 }
