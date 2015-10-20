@@ -25,6 +25,11 @@ class View {
 		return $instance ?: $instance = new self();
 	}
 
+	/**
+	 * Singleton Pattern
+	 *
+	 * @access private
+	 */
 	private function __construct() {}
 
 	/**
@@ -69,6 +74,7 @@ class View {
 			echo $content;
 			if ( $has_option_fields ) {
 				echo '<form method="post" action="options.php">';
+				settings_fields( 'group_' . $page );
 			}
 			do_settings_sections( $page );
 			if ( $has_option_fields ) {
@@ -105,16 +111,20 @@ class View {
 		 * @var string $label_for
 		 * @var string $title
 		 * @var string $option
+		 * @var string $field_callback_type
+		 * @var string $content_{before|after}
 		 * @var string $attr_{$attr}
 		 * ..
 		 */
 		extract( $args );
-		echo isset( $content_before ) ? "<fieldset>\n" . $content_before : '';
+		$wrap = isset( $option ) && ( isset( $content_before ) || isset( $content_after ) || count( $option ) > 1 );
+		echo $wrap ? "<fieldset>\n" : '';
+		echo isset( $content_before ) ? $content_before : '';
 		if ( isset( $field_callback_type ) ) {
 			call_user_func( [ $this, 'field_callback_' . $field_callback_type ], $args );
 		}
 		echo isset( $content_after ) ? $content_after : '';
-		echo isset( $content_before )|| isset( $content_after ) ? "\n<\fieldset>" : '';
+		echo $wrap ? "\n</fieldset>" : '';
 	}
 
 	/**
@@ -129,8 +139,7 @@ class View {
 		/**
 		 * @var string $id
 		 * @var string $option
-		 * @var string $label_left
-		 * @var string $label_right
+		 * @var string $label_{left|right}
 		 * ..
 		 */
 		extract( $args );

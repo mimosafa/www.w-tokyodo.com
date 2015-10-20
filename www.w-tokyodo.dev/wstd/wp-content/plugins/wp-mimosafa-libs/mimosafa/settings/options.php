@@ -32,6 +32,11 @@ class Options {
 	private $_keys = [];
 
 	/**
+	 * @var array
+	 */
+	private $_options = [];
+
+	/**
 	 * Get Instance (Singleton Pattern)
 	 *
 	 * @access public
@@ -39,13 +44,19 @@ class Options {
 	 * @param  string $group
 	 * @return mimosafa\WP\Settings\Options
 	 */
-	public static function instance( $group ) {
+	public static function instance( $group = '' ) {
 		if ( ! self::instanceExists( $group ) ) {
 			self::$_instances[$group] = new self( $group );
 		}
 		return self::$_instances[$group];
 	}
 
+	/**
+	 * @access public
+	 *
+	 * @param  string $group
+	 * @return boolean
+	 */
 	public static function instanceExists( $group ) {
 		if ( ! self::isSanitizedString( $group ) ) {
 			throw new \Exception( 'Invalid Paramator' );
@@ -53,6 +64,12 @@ class Options {
 		return isset( self::$_instances[$group] );
 	}
 
+	/**
+	 * @access private
+	 *
+	 * @param  string $string
+	 * @return boolean|string
+	 */
 	private static function isSanitizedString( $string ) {
 		if ( ! $string || ! is_string( $string ) || $string[0] === '_' ) {
 			return false;
@@ -66,10 +83,12 @@ class Options {
 	 * @access private
 	 */
 	private function __construct( $group ) {
-		$this->_prefix = $group . '_';
+		$this->_prefix = $group ? $group . '_' : '';
 		$this->_cache_group = $this->_prefix . 'options_cache_group';
+		/*
 		add_filter( 'pre_update_option', [ $this, 'pre_update_option' ], 10, 3 );
 		add_action( 'updated_option', [ $this, 'updated_option' ], 10, 3 );
+		*/
 	}
 
 	/**
@@ -82,17 +101,16 @@ class Options {
 	 * @return mimosafa\WP\Settings\Options
 	 */
 	public function add( $option, $filter = null ) {
-		if ( ! self::isSanitizedString( $option ) ) {
-			return false;
-		}
-		if ( $filter ) {
-			if ( method_exists( __CLASS__, 'option_filter_' . $filter ) ) {
-				$filter_cb = [ $this, 'option_filter_' . $filter ];
-			} else if ( is_callable( $filter ) ) {
-				$filter_cb = $filter;
+		if ( self::isSanitizedString( $option ) ) {
+			if ( $filter ) {
+				if ( method_exists( __CLASS__, 'option_filter_' . $filter ) ) {
+					$filter_cb = [ $this, 'option_filter_' . $filter ];
+				} else if ( is_callable( $filter ) ) {
+					$filter_cb = $filter;
+				}
 			}
+			$this->_keys[$option] = isset( $filter_cb ) ? $filter_cb : null;
 		}
-		$this->_keys[$option] = isset( $filter_cb ) ? $filter_cb : null;
 		return $this;
 	}
 
@@ -232,11 +250,13 @@ class Options {
 	 * @param string $option    Name of the option.
 	 * @param mixed  $old_value The old option value.
 	 */
+	/*
 	public function pre_update_option( $value, $option, $old_value ) {
-		if ( ! $keys = $this->option_key( $option ) )
-			return $value;
-		extract( $keys );
-		return apply_filters( $this->_prefix . 'pre_update_option_' . $key, $value, $old_value, $subkey );
+		if ( $keys = $this->option_key( $option ) ) {
+			extract( $keys );
+			return apply_filters( $this->_prefix . 'pre_update_option_' . $key, $value, $old_value, $subkey );
+		}
+		return $value;
 	}
 
 	public function updated_option( $option, $old_value, $value ) {
@@ -266,5 +286,6 @@ class Options {
 		}
 		return [ 'key' => $key, 'subkey' => $subkey ];
 	}
+	*/
 
 }

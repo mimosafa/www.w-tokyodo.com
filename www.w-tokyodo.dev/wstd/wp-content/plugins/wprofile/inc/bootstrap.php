@@ -29,11 +29,9 @@ class Bootstrap extends Singleton {
 		if ( ! defined( 'WPROFILE_MENU_ICON' ) ) {
 			define( 'WPROFILE_MENU_ICON', 'dashicons-id-alt' );
 		}
-		/*
 		$pageInstance = new WP\Settings\Page();
 		$pageInstance->page( WPROFILE_MENU_ID, null, WPROFILE_MENU_TITLE );
 		$pageInstance->icon_url( WPROFILE_MENU_ICON );
-		apply_filters( '_wprofile_settings_page', $pageInstance )->init();
-		*/
+		apply_filters( '_wprofile_settings_page', $pageInstance );
 	}
 }
