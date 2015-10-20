@@ -111,20 +111,23 @@ class View {
 		 * @var string $label_for
 		 * @var string $title
 		 * @var string $option
-		 * @var string $field_callback_type
+		 * @var string $option_callback_type
 		 * @var string $content_{before|after}
 		 * @var string $attr_{$attr}
 		 * ..
 		 */
 		extract( $args );
+		var_dump( $args );
+		/*
 		$wrap = isset( $option ) && ( isset( $content_before ) || isset( $content_after ) || count( $option ) > 1 );
 		echo $wrap ? "<fieldset>\n" : '';
 		echo isset( $content_before ) ? $content_before : '';
-		if ( isset( $field_callback_type ) ) {
-			call_user_func( [ $this, 'field_callback_' . $field_callback_type ], $args );
+		if ( isset( $option_callback_type ) ) {
+			call_user_func( [ $this, 'option_callback_' . $option_callback_type ], $args );
 		}
 		echo isset( $content_after ) ? $content_after : '';
 		echo $wrap ? "\n</fieldset>" : '';
+		*/
 	}
 
 	/**
@@ -135,7 +138,7 @@ class View {
 	 * @param  array $args
 	 * @return void
 	 */
-	private function field_callback_checkbox( Array $args ) {
+	private function option_callback_checkbox( Array $args ) {
 		/**
 		 * @var string $id
 		 * @var string $option
@@ -161,7 +164,7 @@ class View {
 	 * @param  array $args
 	 * @return void
 	 */
-	public function field_callback_text( Array $args ) {
+	public function option_callback_text( Array $args ) {
 		/**
 		 * @var string $id
 		 * @var int    $attr_size

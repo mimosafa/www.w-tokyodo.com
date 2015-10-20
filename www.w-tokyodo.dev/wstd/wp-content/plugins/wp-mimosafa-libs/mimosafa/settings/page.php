@@ -192,31 +192,12 @@ class Page {
 	 * @param  array    $arguments Optional.
 	 * @return mimosafa\WP\Settings\Page
 	 */
-	/*
 	public function option( $option, $callback = null, $sanitize = null ) {
 		$cache =& $this->getCache();
 		if ( ! empty( $cache['field'] ) ) {
 			if ( $option = filter_var( $option ) ) {
 				$this->_init_option();
 				$cache['option']['option'] = $option;
-				if ( $callback ) {
-					$this->callback( $callback, $sanitize );
-				} else if ( $sanitize ) {
-					$this->sanitize( $sanitize );
-				}
-				if ( ! isset( $cache['page']['has_option_fields'] ) ) {
-					$cache['page']['has_option_fields'] = true;
-				}
-			}
-		}
-		return $this;
-	}
-	*/
-	public function option( $option, $callback = null, $sanitize = null ) {
-		$cache =& $this->getCache();
-		if ( $cache['field'] ) {
-			if ( $option = filter_var( $option ) ) {
-				$cache['field']['option'] = $option;
 				if ( $callback ) {
 					$this->callback( $callback, $sanitize );
 				} else if ( $sanitize ) {
@@ -241,20 +222,16 @@ class Page {
 	 */
 	public function callback( $callback, $sanitize = null ) {
 		if ( $cache =& $this->getCurrentCache() ) {
-			$option_required = false;
-			if ( $cache === $this->getCache( 'field' )
-				&& is_string( $callback )
-				&& method_exists( self::$view, 'field_callback_' . $callback ) )
-			{
-				$cache['field_callback_type'] = $callback;
-				$callback = [ self::$view, 'field_callback' ];
-				$option_required = true;
-			}
-			if ( is_callable( $callback ) && ( ! $option_required || isset( $cache['option'] ) ) ) {
-				$cache['callback'] = $callback;
+			if ( $cache === $this->getCache( 'option' ) ) {
+				if ( is_string( $callback ) && method_exists( self::$view, 'option_callback_' . $callback ) ) {
+					$cache['option_callback_type'] = $callback;
+				}
 				if ( $sanitize ) {
 					$this->sanitize( $sanitize );
 				}
+			}
+			else if ( is_callable( $callback ) ) {
+				$cache['callback'] = $callback;
 			}
 		}
 		return $this;
@@ -810,7 +787,6 @@ class Page {
 			 */
 			unset( $args['callback'] );
 		}
-		/*
 		if ( isset( $option ) && $option ) {
 			if ( count( $option ) === 1 ) {
 				$args['label_for'] = $option[0]['option'];
@@ -826,19 +802,19 @@ class Page {
 				$this->settings[] = [ $option_group, $option, $sanitize ];
 			}
 		}
-		//*/
-		//*
-		if ( isset( $option ) ) {
-			$option_group = 'group_' . $page;
-			if ( ! isset( $sanitize ) ) {
-				$sanitize = '';
-			} else {
-				unset( $args['sanitize'] );
-			}
-			$this->settings[] = [ $option_group, $option, $sanitize ];
-		}
-		//*/
 		$this->fields[] = [ $id, $title, $callback, $page, $section, $args ];
+	}
+
+	private function _add_option( Array $args, $page ) {
+		/**
+		 *
+		 */
+		extract( $args );
+		$option_group = 'group_' . $page;
+		if ( isset( $sanitize ) ) {
+			unset( $args['sanitize'] );
+		}
+		$this->settings[] = [ $option_group, $option, isset( $sanitize ) ? $sanitize : '' ];
 	}
 
 	/**
