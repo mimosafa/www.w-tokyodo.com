@@ -1,0 +1,7 @@
+/**
+ * Settings Page Styles
+ */
+input.label_l,
+input[type="checkbox"].label_l {
+  margin-left: 4px;
+}

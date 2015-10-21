@@ -53,7 +53,7 @@ class View {
 			/**
 			 * File include
 			 */
-			extract( $include_file_args );
+			extract( $include_file_args, \EXTR_SKIP );
 			include( $file_path );
 		} else {
 			/**
@@ -108,16 +108,38 @@ class View {
 	public function field_callback( Array $args ) {
 		/**
 		 * @var string $id
-		 * @var string $label_for
-		 * @var string $title
-		 * @var string $option
-		 * @var string $option_callback_type
-		 * @var string $content_{before|after}
-		 * @var string $attr_{$attr}
+		 * @var string $page
+		 * @var string $section
+		 * @var string $label_for              Optional
+		 * @var string $title                  Optional
+		 * @var string $option                 Optional
+		 * @var string $content_{before|after} Optional
+		 * @var string $attr_{$attr}           Optional
 		 * ..
 		 */
 		extract( $args );
-		var_dump( $args );
+		if ( isset( $option ) && $option ) {
+			$i = 0;
+			foreach ( $option as $opt ) {
+				/**
+				 * @var array $opt {
+				 *     @type string   $option
+				 *     @type string   $option_callback_type
+				 *     @type callable $callback
+				 * }
+				 */
+				$f = '%s';
+				if ( isset( $opt['option_callback_type'] ) ) {
+					$cb = [ $this, 'option_callback_' . $opt['option_callback_type'] ];
+					printf( $f, call_user_func_array( $cb, [ $opt, $i ] ) );
+				} else if ( isset( $opt['callback'] ) ) {
+					$tag = sprintf( 'option_callback_%s_%s_%s_%s', $page, $section, $id, $opt['option'] );
+					do_action( $tag, $opt );
+					# printf( $f, call_user_func( $opt['callback'], $opt ) );
+				}
+				$i++;
+			}
+		}
 		/*
 		$wrap = isset( $option ) && ( isset( $content_before ) || isset( $content_after ) || count( $option ) > 1 );
 		echo $wrap ? "<fieldset>\n" : '';
@@ -138,22 +160,33 @@ class View {
 	 * @param  array $args
 	 * @return void
 	 */
-	private function option_callback_checkbox( Array $args ) {
+	private function option_callback_checkbox( Array $args, $i ) {
 		/**
-		 * @var string $id
 		 * @var string $option
 		 * @var string $label_{left|right}
 		 * ..
 		 */
 		extract( $args );
-		$label_left  = isset( $label_left )  ? $label_left  : '';
-		$label_right = isset( $label_right ) ? $label_right : '';
-		?>
-<label for="<?= esc_attr( $id ) ?>">
-	<?= $label_left ?>
-	<input type="checkbox" name="<?= esc_attr( $option) ?>" id="<?= esc_attr( $id ) ?>" value="1"<?php checked( get_option( $option) ); ?>>
-	<?= $label_right ?>
-</label><?php
+		$escOpt = esc_attr( $option );
+		$attr = checked( get_option( $option ), true, false );
+		$label = isset( $label ) ? $label : '';
+		if ( $label_l  = isset( $label_l )  ? $label_l  : '' ) {
+			$attr .= ' class="label_l"';
+		}
+		$label_r = isset( $label_r ) ? $label_r : $label;
+		$br = $i && isset( $br ) ? '<br>' : '';
+		$before = isset( $p ) ? '<p>'  : $br;
+		$after  = isset( $p ) ? '</p>' : '';
+		/**
+		 * Return HTML
+		 */
+		return <<<EOF
+{$before}
+<label for="{$escOpt}">
+	{$label_l}<input type="checkbox" name="{$escOpt}" id="{$escOpt}" value="1"{$attr}>{$label_r}
+</label>
+{$after}
+EOF;
 	}
 
 	/**
@@ -164,21 +197,43 @@ class View {
 	 * @param  array $args
 	 * @return void
 	 */
-	public function option_callback_text( Array $args ) {
+	public function option_callback_text( Array $args, $i ) {
 		/**
 		 * @var string $id
 		 * @var int    $attr_size
 		 */
 		extract( $args );
+		$escOpt = esc_attr( $option );
+		$val = esc_attr( get_option( $option ) );
+		$label = isset( $label ) ? $label : '';
+		$class = '';
+		if ( $label_l  = isset( $label_l )  ? $label_l  : $label ) {
+			$class .= 'label_l';
+		}
+		$label_r = isset( $label_r ) ? $label_r : '';
+		$label_open  = $label_l || $label_r ? '<label>' : '';
+		$label_close = $label_open ? '</label>' : '';
 		$attr = '';
-		if ( $attr_size ) {
-			$attr .= ' size="' . $attr_size . '"';
+		if ( isset( $attr_size ) ) {
+			$attr .= 'size="' . (int) $attr_size . '"';
 		}
 		if ( ! $attr ) {
-			$attr .= ' class="regular-text"';
+			$class .= ' regular-text';
 		}
-		?>
-<input type="text" name="<?= esc_attr( $option ) ?>" id="<?= esc_attr( $id) ?>" value="<?php form_option( $option ); ?>"<?= $attr ?>><?php
+		$attr .= ' class="' . trim( $class ) . '"';
+		$br = $i && isset( $br ) ? '<br>' : '';
+		$before = isset( $p ) ? '<p>'  : $br;
+		$after  = isset( $p ) ? '</p>' : '';
+		/**
+		 * Return HTML
+		 */
+		return <<<EOF
+{$before}
+{$label_open}
+	{$label_l}<input type="text" name="{$escOpt}" id="{$escOpt}" value="{$val}" {$attr}>{$label_r}
+{$label_close}
+{$after}
+EOF;
 	}
 
 }

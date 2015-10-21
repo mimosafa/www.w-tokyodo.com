@@ -31,6 +31,21 @@ class Page {
 	private $pages = [];
 
 	/**
+	 * @var null|int
+	 */
+	private $position;
+
+	/**
+	 * @var boolean
+	 */
+	private $replace_menu = false;
+
+	/**
+	 * @var string
+	 */
+	private $icon_url = '';
+
+	/**
 	 * @var array
 	 */
 	private $sections = [];
@@ -79,6 +94,8 @@ class Page {
 			$opts = $args[0];
 			/**
 			 * Set Options Instance
+			 *
+			 * @uses mimosaffa\WP\Settings\Options::instance()
 			 */
 			if ( $opts instanceof Options ) {
 				$this->opts = $opts;
@@ -120,7 +137,7 @@ class Page {
 	 */
 	public function page( $page, $title = null, $menu_title = null ) {
 		if ( $page = filter_var( $page ) ) {
-			$this->_init_page();
+			$this->_flush_page();
 			$cache =& $this->getCache( 'page' );
 			$cache['page'] = $page;
 			if ( ! isset( $this->toplevel ) ) {
@@ -149,7 +166,7 @@ class Page {
 		$cache =& $this->getCache();
 		if ( ! empty( $cache['page'] ) ) {
 			if ( $section = filter_var( $section ) ) {
-				$this->_init_section();
+				$this->_flush_section();
 				$cache['section']['id'] = $section;
 				if ( is_string( $title ) ) {
 					$cache['section']['title'] = $title;
@@ -172,7 +189,7 @@ class Page {
 		$cache =& $this->getCache();
 		if ( ! empty( $cache['section'] ) ) {
 			if ( $field = filter_var( $field ) ) {
-				$this->_init_field();
+				$this->_flush_field();
 				$cache['field']['id'] = $field;
 				if ( $title = filter_var( $title ) ) {
 					$cache['field']['title'] = $title;
@@ -195,8 +212,8 @@ class Page {
 	public function option( $option, $callback = null, $sanitize = null ) {
 		$cache =& $this->getCache();
 		if ( ! empty( $cache['field'] ) ) {
-			if ( $option = filter_var( $option ) ) {
-				$this->_init_option();
+			if ( $option = $this->_option_name( $option ) ) {
+				$this->_flush_option();
 				$cache['option']['option'] = $option;
 				if ( $callback ) {
 					$this->callback( $callback, $sanitize );
@@ -247,15 +264,34 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function sanitize( Callable $sanitize ) {
-		/*
-		if ( ! $cache =& $this->getCache( 'field' ) ) {
-			return;
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['sanitize'] = $sanitize;
 		}
-		if ( ! isset( $cache['option'] ) ) {
-			return;
+		return $this;
+	}
+
+	/**
+	 * Set other argument
+	 *
+	 * @access public
+	 *
+	 * @param  array $args
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function misc( Array $args, $key = null ) {
+		if ( ! isset( $key ) ) {
+			$cache =& $this->getCurrentCache();
+		} else if ( is_string( $key ) && in_array( $key, [ 'page', 'section', 'field', 'option' ], true ) ) {
+			$cache =& $this->getCache( $key );
 		}
-		$cache['sanitize'] = $sanitize;
-		*/
+		if ( isset( $cache ) && $cache ) {
+			foreach ( $args as $key => $val ) {
+				$key = sanitize_key( $key );
+				if ( ! strpos( $key, '-' ) && ! isset( $cache[$key] ) ) {
+					$cache[$key] = $val;
+				}
+			}
+		}
 		return $this;
 	}
 
@@ -272,25 +308,6 @@ class Page {
 	}
 
 	/**
-	 * Set other argument
-	 *
-	 * @access public
-	 *
-	 * @param  array $args
-	 * @return mimosafa\WP\Settings\Page
-	 */
-	public function misc( Array $args ) {
-		if ( $cache =& $this->getCurrentCache() ) {
-			foreach ( $args as $key => $val ) {
-				if ( ! array_key_exists( $key, $cache ) ) {
-					$cache[$key] = $val;
-				}
-			}
-		}
-		return $this;
-	}
-
-	/**
 	 * Set Page Title
 	 *
 	 * @access public
@@ -299,10 +316,8 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function title( $title ) {
-		if ( $cache =& $this->getCurrentCache() ) {
-			if ( $title = filter_var( $title ) ) {
-				$cache['title'] = $title;
-			}
+		if ( $title = filter_var( $title ) ) {
+			return $this->misc( [ 'title' => $title ] );
 		}
 		return $this;
 	}
@@ -316,10 +331,8 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function menu_title( $menu_title ) {
-		if ( $cache =& $this->getCache( 'page' ) ) {
-			if ( $menu_title = filter_var( $menu_title ) ) {
-				$cache['menu_title'] = $menu_title;
-			}
+		if ( $menu_title = filter_var( $menu_title ) ) {
+			return $this->misc( [ 'menu_title' => $menu_title ], 'page' );
 		}
 		return $this;
 	}
@@ -333,10 +346,31 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function capability( $capability ) {
-		if ( $cache =& $this->getCache( 'page' ) ) {
-			if ( $capability = filter_var( $capability ) ) {
-				$cache['capability'] = $capability;
+		if ( $capability = filter_var( $capability ) ) {
+			return $this->misc( [ 'capability' => $capability ], 'page' );
+		}
+		return $this;
+	}
+
+	public function label( $label, $pos = null ) {
+		if ( $label = filter_var( $label ) ) {
+			if ( ! isset( $pos ) || in_array( $pos, [ 'l', 'r' ] ) ) {
+				return $this->misc( [ ( $pos ? 'label_' . $pos : 'label' ) => $label ], 'option' );
 			}
+		}
+		return $this;
+	}
+
+	public function br() {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['br'] = true;
+		}
+		return $this;
+	}
+
+	public function p() {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['p'] = true;
 		}
 		return $this;
 	}
@@ -348,11 +382,7 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function icon_url( $icon_url ) {
-		if ( $cache =& $this->getCache( 'page' ) ) {
-			if ( $icon_url = filter_var( $icon_url ) ) {
-				$cache['icon_url'] = $icon_url;
-			}
-		}
+		$this->icon_url = filter_var( $icon_url );
 		return $this;
 	}
 
@@ -363,12 +393,8 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function position( $position, $replace = false ) {
-		if ( $cache =& $this->getCache( 'page' ) ) {
-			if ( $position = absint( $position ) ) {
-				$cache['position'] = $position;
-				$cache['replace_menu'] = filter_var( $replace, \FILTER_VALIDATE_BOOLEAN );
-			}
-		}
+		$this->position = filter_var( $position, \FILTER_VALIDATE_INT, [ 'options' => [ 'default' => null ] ] );
+		$this->replace_menu = filter_var( $replace, \FILTER_VALIDATE_BOOLEAN );
 		return $this;
 	}
 
@@ -381,10 +407,14 @@ class Page {
 			return $this;
 		}
 		if ( $content = filter_var( $content ) ) {
-			if ( $fieldCached && $place && in_array( $place, [ 'before', 'after' ], true ) ) {
-				$tar = 'content_' . $place;
+			if ( $fieldCached ) {
+				if ( $place && in_array( $place, [ 'before', 'after' ], true ) ) {
+					$tar = 'content_' . $place;
+				} else {
+					$tar = 'content_after';
+				}
 			} else {
-				$tar = 'content_after';
+				$tar = 'content';
 			}
 			if ( isset( $cache[$tar] ) ) {
 				$cache[$tar] = $cache[$tar] . "\n" . $content;
@@ -449,7 +479,7 @@ class Page {
 	 * @return (void)
 	 */
 	public function _init() {
-		$this->_init_page();
+		$this->_flush_page();
 		$this->_add_pages();
 		add_action( 'admin_init', [ $this, '_add_settings' ] );
 	}
@@ -460,8 +490,8 @@ class Page {
 	 * @access private
 	 * @uses   mimosafa\WP\Settings\Controller::addPageArgs()
 	 */
-	private function _init_page() {
-		$this->_init_section();
+	private function _flush_page() {
+		$this->_flush_section();
 		if ( $cache =& $this->getCache( 'page' ) ) {
 			$this->pages[] = $cache;
 		}
@@ -473,8 +503,8 @@ class Page {
 	 *
 	 * @access private
 	 */
-	private function _init_section() {
-		$this->_init_field();
+	private function _flush_section() {
+		$this->_flush_field();
 		$cache =& $this->getCache();
 		if ( $cache['section'] ) {
 			if ( ! isset( $cache['page']['sections'] ) ) {
@@ -490,7 +520,8 @@ class Page {
 	 *
 	 * @access private
 	 */
-	private function _init_field() {
+	private function _flush_field() {
+		$this->_flush_option();
 		$cache =& $this->getCache();
 		if ( $cache['field'] ) {
 			if ( ! isset( $cache['section']['fields'] ) ) {
@@ -507,7 +538,7 @@ class Page {
 	 *
 	 * @access private
 	 */
-	private function _init_option() {
+	private function _flush_option() {
 		$cache =& $this->getCache();
 		if ( $cache['option'] ) {
 			if ( ! isset( $cache['field']['option'] ) ) {
@@ -516,6 +547,26 @@ class Page {
 			$cache['field']['option'][] = $cache['option'];
 		}
 		$cache['option'] = [];
+	}
+
+	/**
+	 * Option Full Name
+	 *
+	 * @access private
+	 *
+	 * @uses   mimosafa\WP\Settings\Options
+	 *
+	 * @param  string $option
+	 * @return string|boolean
+	 */
+	private function _option_name( $option ) {
+		if ( $option = filter_var( $option ) ) {
+			if ( $this->opts ) {
+				$option = $this->opts->$option;
+			}
+			return $option;
+		}
+		return false;
 	}
 
 	/**
@@ -614,7 +665,9 @@ class Page {
 			$capability = 'manage_options';
 		}
 		if ( ! isset( $callback ) ) {
-			if ( $page === $this->toplevel && count( $this->pages ) > 1 ) {
+			if ( $page === $this->toplevel && count( $this->pages ) > 1
+				&& ! isset( $sections ) && ! isset( $content ) && ! isset( $file_path ) )
+			{
 				$callback = '';
 				add_action( $this->toplevel . '_added_pages', function() {
 					/**
@@ -628,16 +681,11 @@ class Page {
 			}
 		}
 		if ( $page === $this->toplevel ) {
-			if ( ! isset( $icon_url ) ) {
-				$icon_url = '';
-			}
-			if ( ! isset( $position ) ) {
-				$position = null;
-			} else if ( ! $replace_menu ) {
+			if ( isset( $this->position ) && ! $this->replace_menu ) {
 				global $menu;
 				$positions = array_keys( $menu );
-				for ( $position; true; $position++ ) { 
-					if ( ! in_array( $position, $positions, true ) ) {
+				for ( $this->position; true; $this->position++ ) {
+					if ( ! in_array( $this->position, $positions, true ) ) {
 						break;
 					}
 				}
@@ -645,7 +693,7 @@ class Page {
 			/**
 			 * Add as top level page
 			 */
-			$load_page = add_menu_page( $title, $menu_title, $capability, $page, $callback, $icon_url, $position );
+			$load_page = add_menu_page( $title, $menu_title, $capability, $page, $callback, $this->icon_url, $this->position );
 		} else {
 			/**
 			 * Add as sub page
@@ -664,7 +712,7 @@ class Page {
 				$this->_add_section( $section, $page, $load_page );
 			}
 		}
-		add_action( 'load-' . $load_page, [ $this, '_set_screen_args' ] );
+		add_action( 'load-' . $load_page, [ $this, '_init_screen' ] );
 	}
 
 	/**
@@ -696,12 +744,16 @@ class Page {
 	 *
 	 * @global WP_Screen $current_screen
 	 */
-	public function _set_screen_args() {
+	public function _init_screen() {
 		global $current_screen;
 		if ( empty( $current_screen ) ) {
 			set_current_screen();
 		}
 		$current_screen->settings_page_args = $this->screen_args[$current_screen->base];
+		/**
+		 * Stylesheet, JavaScripts
+		 */
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
 	}
 
 	/**
@@ -792,28 +844,21 @@ class Page {
 				$args['label_for'] = $option[0]['option'];
 			}
 			$option_group = 'group_' . $page;
-			foreach ( $option as $opt ) {
-				if ( ! isset( $opt['sanitize'] ) ) {
-					$sanitize = '';
-				} else {
-					$sanitize = $opt['sanitize'];
-					unset( $opt['sanitize'] );
-				}
-				$this->settings[] = [ $option_group, $option, $sanitize ];
+			foreach ( $option as $n => $opt ) {
+				$this->_add_option( $opt, $option_group );
 			}
 		}
+		$args['page'] = $page;
+		$args['section'] = $section;
 		$this->fields[] = [ $id, $title, $callback, $page, $section, $args ];
 	}
 
-	private function _add_option( Array $args, $page ) {
+	private function _add_option( Array $args, $option_group ) {
 		/**
-		 *
+		 * @var string   $option
+		 * @var callable $sanitize
 		 */
 		extract( $args );
-		$option_group = 'group_' . $page;
-		if ( isset( $sanitize ) ) {
-			unset( $args['sanitize'] );
-		}
 		$this->settings[] = [ $option_group, $option, isset( $sanitize ) ? $sanitize : '' ];
 	}
 
@@ -836,6 +881,20 @@ class Page {
 		foreach ( $this->settings as $setting_arg ) {
 			call_user_func_array( 'register_setting', $setting_arg );
 		}
+	}
+
+	/**
+	 * Enqueue Stylesheets & JavaScripts
+	 *
+	 * @access private
+	 */
+	public function enqueue_scripts() {
+		$src = plugins_url( 'src', __FILE__ );
+		$ver = defined( 'WP_MIMOSAFA_LIBS_VER' ) ? WP_MIMOSAFA_LIBS_VER : '';
+		if ( ! wp_style_is( 'mimosafa_admin_form', 'registered' ) ) {
+			wp_register_style( 'mimosafa_admin_form', $src . '/css/admin-form.css', [], $ver, 'screen' );
+		}
+		wp_enqueue_style( 'mimosafa_admin_form' );
 	}
 
 }

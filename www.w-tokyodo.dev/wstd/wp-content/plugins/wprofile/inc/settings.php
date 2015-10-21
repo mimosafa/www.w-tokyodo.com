@@ -53,22 +53,23 @@ class Settings extends Base {
 		->title( __( 'WProfile General Settings', 'wprofile' ) )
 			->section( 'org-settings', __( 'Organization Settings', 'wprofile' ) )
 				->field( 'org-profile', __( 'Enable Organization Profile' ) )
-					->option( $this->opts->activate_org_profile, 'checkbox' )
+					->option( 'activate_org_profile', 'checkbox' )
+					->sanitize( 'esc_html' )
 		;
 		if ( $this->opts->get_activate_org_profile() ) {
 			$page
 			->field( 'org-name', __( 'Organization Name', 'wprofile' ) )
-				->option( $this->opts->org_name, 'text', 'esc_html' )
+				->option( 'org_name', 'text', 'esc_html' )
 				->attr_size( 80 )
 			->field( 'org-abbr', __( 'Organization Abbreviation' ) )
-				->option( $this->opts->org_abbr, 'text', 'esc_html' )
+				->option( 'org_abbr', 'text', 'esc_html' )
 				->attr_size( 30 )
 			;
 		}
 		$page
-		->section( 'extend-personal-profile', __( 'Exted Personal Profile', 'wprofile' ) )
+		->section( 'extend-personal-profile', __( 'Extend Personal Profile', 'wprofile' ) )
 			->field( 'activate-extension' )
-				->option( $this->opts->activate_extension, 'checkbox' )
+				->option( 'activate_extension', 'checkbox' )
 		;
 		return $page;
 	}
