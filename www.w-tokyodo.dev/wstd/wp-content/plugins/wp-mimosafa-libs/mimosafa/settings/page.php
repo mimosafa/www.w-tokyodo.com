@@ -5,7 +5,9 @@ namespace mimosafa\WP\Settings;
  * WordPress Settings API Controller & Interface Class
  *
  * @access public
+ *
  * @uses mimosafa\WP\Settings\View
+ * @uses mimosafa\WP\Settings\Options
  *
  * @package WordPress
  * @subpackage WordPress Libraries by mimosafa
@@ -17,14 +19,14 @@ namespace mimosafa\WP\Settings;
 class Page {
 
 	/**
-	 * Top level page
+	 * Top Level Page
 	 *
 	 * @var string
 	 */
 	private $toplevel;
 
 	/**
-	 * Structure of settings page
+	 * Structure of Settings Page
 	 *
 	 * @var array
 	 */
@@ -53,19 +55,26 @@ class Page {
 	private $settings = [];
 
 	/**
-	 * Argument caches
+	 * Caches
 	 *
 	 * @var array
 	 */
-	private $cache = [ 'page' => [], 'section' => [], 'field' => [], 'option' => [] ];
+	private $cache = [
+		'page'    => [],
+		'section' => [],
+		'field'   => [],
+		'option'  => []
+	];
 
 	/**
+	 * Arguments for Rendering Page
+	 *
 	 * @var array
 	 */
 	private $screen_args = [];
 
 	/**
-	 * Options Model Class Instance
+	 * Model(Options) Class Instance
 	 *
 	 * @var mimosafa\WP\Settings\Options
 	 */
@@ -83,13 +92,15 @@ class Page {
 	 *
 	 * @access public
 	 *
-	 * @param  string $page       Optional
-	 * @param  string $page_title Optional
-	 * @param  string $menu_title Optional
+	 * @param  string|mimosafa\WP\Settings\Options $opt  Optional
+	 * @param  array                               $args Optional
+	 * @return void
 	 */
 	public function __construct() {
+		/**
+		 * Construct View Instance if yet
+		 */
 		self::$view ?: self::$view = View::instance();
-		add_action( 'admin_menu', [ $this, '_init' ] );
 		if ( $args = func_get_args() ) {
 			$opts = $args[0];
 			/**
@@ -109,6 +120,7 @@ class Page {
 				$this->_init_pages_array( $args[1] );
 			}
 		}
+		add_action( 'admin_menu', [ $this, '_init' ] );
 	}
 
 	/**
@@ -124,11 +136,9 @@ class Page {
 	}
 
 	/**
-	 * Initialize class properties & Set page
+	 * Set Page
 	 *
 	 * @access public
-	 *
-	 * @uses   mimosafa\WP\Settings\Controller::defineToplevelPage()
 	 *
 	 * @param  string $page
 	 * @param  string $title      Optional
@@ -154,7 +164,7 @@ class Page {
 	}
 
 	/**
-	 * Set section
+	 * Set Section
 	 *
 	 * @access public
 	 *
@@ -167,7 +177,7 @@ class Page {
 		if ( ! empty( $cache['page'] ) ) {
 			if ( $section = filter_var( $section ) ) {
 				$this->_flush_section();
-				$cache['section']['id'] = $section;
+				$cache['section']['section'] = $section;
 				if ( is_string( $title ) ) {
 					$cache['section']['title'] = $title;
 				}
@@ -177,7 +187,7 @@ class Page {
 	}
 
 	/**
-	 * Set field
+	 * Set Field
 	 *
 	 * @access public
 	 *
@@ -190,7 +200,7 @@ class Page {
 		if ( ! empty( $cache['section'] ) ) {
 			if ( $field = filter_var( $field ) ) {
 				$this->_flush_field();
-				$cache['field']['id'] = $field;
+				$cache['field']['field'] = $field;
 				if ( $title = filter_var( $title ) ) {
 					$cache['field']['title'] = $title;
 				}
@@ -200,13 +210,13 @@ class Page {
 	}
 
 	/**
-	 * Set option
+	 * Set Option
 	 *
 	 * @access public
 	 *
-	 * @param  string   $option
-	 * @param  callable $callback Optional.
-	 * @param  array    $arguments Optional.
+	 * @param  string          $option
+	 * @param  string|callable $callback  Optional.
+	 * @param  array           $arguments Optional.
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function option( $option, $callback = null, $sanitize = null ) {
@@ -247,7 +257,7 @@ class Page {
 					$this->sanitize( $sanitize );
 				}
 			}
-			else if ( is_callable( $callback ) ) {
+			if ( ! isset( $cache['option_callback_type'] ) && is_callable( $callback ) ) {
 				$cache['callback'] = $callback;
 			}
 		}
@@ -271,37 +281,71 @@ class Page {
 	}
 
 	/**
-	 * Set other argument
+	 * Misc Properties
+	 *
+	 * - attr_size( int|array $size )
+	 * - attr_cols( int $size )
+	 * - attr_rows( int $size )
+	 * - attr_class( string $class )
 	 *
 	 * @access public
 	 *
-	 * @param  array $args
 	 * @return mimosafa\WP\Settings\Page
 	 */
-	public function misc( Array $args, $key = null ) {
-		if ( ! isset( $key ) ) {
-			$cache =& $this->getCurrentCache();
-		} else if ( is_string( $key ) && in_array( $key, [ 'page', 'section', 'field', 'option' ], true ) ) {
-			$cache =& $this->getCache( $key );
-		}
-		if ( isset( $cache ) && $cache ) {
-			foreach ( $args as $key => $val ) {
-				$key = sanitize_key( $key );
-				if ( ! strpos( $key, '-' ) && ! isset( $cache[$key] ) ) {
-					$cache[$key] = $val;
+	public function __call( $name, $params ) {
+		if ( substr( $name, 0, 5 ) === 'attr_' ) {
+			$key = substr( $name, 5 );
+			/**
+			 * @var callable $sizeFilter
+			 */
+			static $sizeFilter;
+			if ( ! isset( $sizeFilter ) ) {
+				$sizeFilter = function( $var ) {
+					return filter_var( $var, \FILTER_VALIDATE_INT, [ 'options' => [ 'min_range' => 1 ] ] );
+				};
+			}
+			if ( $key === 'size' ) {
+				/**
+				 * Attribute Size for option
+				 */
+				if ( $cache =& $this->getCache( 'option' ) ) {
+					if ( is_array( $params[0] ) && count( $params[0] ) === 2 ) {
+						$size = array_map( $sizeFilter, $params[0] );
+						if ( $size[0] ) {
+							$cache['cols'] = $size[0];
+						}
+						if ( $size[1] ) {
+							$cache['rows'] = $size[1];
+						}
+					}
+					else if ( $size = $sizeFilter( $params[0] ) ) {
+						$cache['size'] = $size;
+					}
 				}
 			}
-		}
-		return $this;
-	}
-
-	/**
-	 * @access public
-	 */
-	public function __call( $name, $params ) {
-		if ( $cache =& $this->getCurrentCache() ) {
-			if ( substr( $name, 0, 5 ) === 'attr_' ) {
-				return $this->misc( [ $name => $params[0] ] );
+			else if ( $key === 'cols' || $key === 'rows' ) {
+				/**
+				 * Attribute Cols/Rows for Option (Textarea)
+				 */
+				if ( $cache =& $this->getCache( 'option' ) ) {
+					if ( $val = $sizeFilter( $params[0] ) ) {
+						$cache[$key] = $val;
+					}
+				}
+			}
+			else if ( $key === 'class' ) {
+				/**
+				 * Attribute Class for option, field, and page
+				 */
+				if ( $cache =& $this->getCurrentCache() ) {
+					if ( $params[0] === sanitize_html_class( $params[0] ) ) {
+						if ( isset( $cache['class'] ) ) {
+							$cache['class'] .= ' ' . trim( $params[0] );
+						} else {
+							$cache['class'] = trim( $params[0] );
+						}
+					}
+				}
 			}
 		}
 		return $this;
@@ -316,8 +360,27 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function title( $title ) {
-		if ( $title = filter_var( $title ) ) {
-			return $this->misc( [ 'title' => $title ] );
+		if ( $cache =& $this->getCurrentCache() ) {
+			if ( $title = filter_var( $title ) ) {
+				$cache['title'] = $title;
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Set Page Title as <h2>
+	 *
+	 * @access public
+	 *
+	 * @param  string $page_title
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function h2( $title ) {
+		if ( $cache =& $this->getCache( 'page' ) ) {
+			if ( $title = filter_var( $title ) ) {
+				$cache['h2'] = $title;
+			}
 		}
 		return $this;
 	}
@@ -331,8 +394,10 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function menu_title( $menu_title ) {
-		if ( $menu_title = filter_var( $menu_title ) ) {
-			return $this->misc( [ 'menu_title' => $menu_title ], 'page' );
+		if ( $cache =& $this->getCache( 'page' ) ) {
+			if ( $menu_title = filter_var( $menu_title ) ) {
+				$cache['menu_title'] = $menu_title;
+			}
 		}
 		return $this;
 	}
@@ -346,31 +411,10 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function capability( $capability ) {
-		if ( $capability = filter_var( $capability ) ) {
-			return $this->misc( [ 'capability' => $capability ], 'page' );
-		}
-		return $this;
-	}
-
-	public function label( $label, $pos = null ) {
-		if ( $label = filter_var( $label ) ) {
-			if ( ! isset( $pos ) || in_array( $pos, [ 'l', 'r' ] ) ) {
-				return $this->misc( [ ( $pos ? 'label_' . $pos : 'label' ) => $label ], 'option' );
+		if ( $cache =& $this->getCache( 'page' ) ) {
+			if ( $capability = filter_var( $capability ) ) {
+				$cache['capability'] = $capability;
 			}
-		}
-		return $this;
-	}
-
-	public function br() {
-		if ( $cache =& $this->getCache( 'option' ) ) {
-			$cache['br'] = true;
-		}
-		return $this;
-	}
-
-	public function p() {
-		if ( $cache =& $this->getCache( 'option' ) ) {
-			$cache['p'] = true;
 		}
 		return $this;
 	}
@@ -398,28 +442,90 @@ class Page {
 		return $this;
 	}
 
-	public function content( $content, $place = null ) {
-		if ( $cache =& $this->getCache( 'field' ) ) {
-			$fieldCached = true;
-		} else if ( $cache =& $this->getCurrentCache() ) {
-			$fieldCached = false;
-		} else {
-			return $this;
-		}
-		if ( $content = filter_var( $content ) ) {
-			if ( $fieldCached ) {
-				if ( $place && in_array( $place, [ 'before', 'after' ], true ) ) {
-					$tar = 'content_' . $place;
+	/**
+	 * Set Option Form Label
+	 *
+	 * @todo   rtl
+	 *
+	 * @access public
+	 *
+	 * @param  string $label
+	 * @param  string $pos   Optional l|r
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function label( $label, $pos = null ) {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			if ( $label = filter_var( $label ) ) {
+				if ( is_string( $pos ) && in_array( $pos, [ 'l', 'r', 'before', 'after' ], true ) ) {
+					if ( $pos === 'l' ) {
+						$pos = 'before';
+					}
+					else if ( $pos === 'r' ) {
+						$pos = 'after';
+					}
+					$key = 'label_' . $pos;
 				} else {
-					$tar = 'content_after';
+					$key = 'label';
 				}
-			} else {
-				$tar = 'content';
+				$cache[$key] = $label;
 			}
-			if ( isset( $cache[$tar] ) ) {
-				$cache[$tar] = $cache[$tar] . "\n" . $content;
-			} else {
-				$cache[$tar] = $content;
+		}
+		return $this;
+	}
+
+	/**
+	 * Insert <br> Before Option Form
+	 *
+	 * @access public
+	 *
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function br() {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['br'] = true;
+		}
+		return $this;
+	}
+
+	/**
+	 * Wrap Option Form by <p>
+	 *
+	 * @access public
+	 *
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function p() {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['p'] = true;
+		}
+		return $this;
+	}
+
+	/**
+	 * Set Content
+	 *
+	 * @access public
+	 *
+	 * @param  string $content
+	 * @param  string $place   Optional before|after
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function content( $content, $place = null ) {
+		if ( $cache =& $this->getCurrentCache() ) {
+			if ( $content = filter_var( $content ) ) {
+				$key = 'content';
+				if ( $cache === $this->getCache( 'option' ) || $cache === $this->getCache( 'field' ) ) {
+					if ( $place && in_array( $place, [ 'before', 'after' ], true ) ) {
+						$key .= '_' . $place;
+					} else {
+						$key .= '_after';
+					}
+				}
+				if ( isset( $cache[$key] ) ) {
+					$cache[$key] = $cache[$key] . "\n" . $content;
+				} else {
+					$cache[$key] = $content;
+				}
 			}
 		}
 		return $this;
@@ -434,8 +540,15 @@ class Page {
 	 * @return mimosafa\WP\Settings\Page
 	 */
 	public function description( $text, $place = null ) {
-		if ( $text = filter_var( $text ) ) {
-			$this->content( sprintf( '<p class="description">%s</p>', $text ), $place );
+		if ( $cache =& $this->getCurrentCache() ) {
+			if ( $text = filter_var( $text ) ) {
+				if ( $cache === $this->getCache( 'option' ) || $cache === $this->getCache( 'field' ) ) {
+					$text = '<p class="description">' . $text . '</p>';
+				} else {
+					$text = '<p>' . $text . '</p>';
+				}
+			}
+			$this->content( $text, $place );
 		}
 		return $this;
 	}
@@ -532,7 +645,6 @@ class Page {
 		$cache['field'] = [];
 	}
 
-
 	/**
 	 * Initialize static cache $option
 	 *
@@ -544,7 +656,7 @@ class Page {
 			if ( ! isset( $cache['field']['option'] ) ) {
 				$cache['field']['option'] = [];
 			}
-			$cache['field']['option'][] = $cache['option'];
+			$cache['field']['options'][] = $cache['option'];
 		}
 		$cache['option'] = [];
 	}
@@ -635,12 +747,10 @@ class Page {
 		/**
 		 * @var string   $page
 		 * @var string   $title             Optional
+		 * @var string   $h2                Optional
 		 * @var string   $menu_title        Optional
 		 * @var string   $capability        Optional
 		 * @var callable $callback          Optional
-		 * @var string   $icon_url          Optional
-		 * @var int      $position          Optional
-		 * @var boolean  $replace_menu      Optional
 		 * @var array    $sections          Optional
 		 * @var string   $content           Optional
 		 * @var boolean  $has_option_fields Optional
@@ -656,8 +766,9 @@ class Page {
 		}
 		if ( ! isset( $title ) ) {
 			$title = __( ucwords( trim( str_replace( [ '-', '_', '/', '.php' ], ' ', $page ) ) ) );
-			$args['title'] = $title;
 		}
+		$args['title'] = isset( $h2 ) ? $h2 : $title;
+		$title = esc_html( $title );
 		if ( ! isset( $menu_title ) ) {
 			$menu_title = $title;
 		}
@@ -726,6 +837,7 @@ class Page {
 	 *     @type boolean $has_option_fields
 	 *     @type string  $file_path
 	 *     @type array   $include_file_args
+	 *     @type string  $class
 	 * }
 	 */
 	private static function _page_callback_args( Array $args ) {
@@ -736,6 +848,7 @@ class Page {
 		$return['has_option_fields'] = isset( $args['has_option_fields'] ) ? $args['has_option_fields'] : false;
 		$return['file_path']         = isset( $args['file_path'] ) ? $args['file_path'] : '';
 		$return['include_file_args'] = isset( $args['include_file_args'] ) ? $args['include_file_args'] : [];
+		$return['class']             = isset( $args['class'] ) ? $args['class'] : '';
 		return $return;
 	}
 
@@ -768,11 +881,11 @@ class Page {
 	 */
 	private function _add_section( Array $args, $page, $load_page ) {
 		/**
-		 * @var string   $id
-		 * @var string   $title
-		 * @var callable $callback
-		 * @var array    $fields
-		 * @var string   $content
+		 * @var string   $section
+		 * @var string   $title    Optional
+		 * @var callable $callback Optional
+		 * @var array    $fields   Optional
+		 * @var string   $content  Optional
 		 */
 		extract( $args, \EXTR_SKIP );
 		if ( ! isset( $title ) ) {
@@ -781,16 +894,16 @@ class Page {
 		if ( ! isset( $callback ) ) {
 			$callback = [ self::$view, 'section_callback' ];
 		}
-		$this->sections[] = [ $id, $title, $callback, $page ];
+		$this->sections[] = [ $section, $title, $callback, $page ];
 		if ( isset( $fields ) && $fields ) {
 			foreach ( $fields as $field ) {
-				$this->_add_field( $field, $page, $id );
+				$this->_add_field( $field, $page, $section );
 			}
 		}
 		/**
 		 * Store Args
 		 */
-		$this->screen_args[$load_page]['sections'][$id] = self::_section_callback_args( $args );
+		$this->screen_args[$load_page]['sections'][$section] = self::_section_callback_args( $args );
 	}
 
 	/**
@@ -819,17 +932,15 @@ class Page {
 	 */
 	private function _add_field( Array $args, $page, $section ) {
 		/**
-		 * @var string $id
-		 * @var string $label_for
-		 * @var string $title
-		 * @var string $option
-		 * @var string $attr_{size}
-		 * @var string $label_{left|right}
+		 * @var string $field
+		 * @var string $title                  Optional
+		 * @var string $options                Optional
+		 * @var string $content_{before|after} Optional
 		 * ..
 		 */
 		extract( $args, \EXTR_SKIP );
 		if ( ! isset( $title ) ) {
-			$title = __( ucwords( str_replace( [ '-', '_' ], ' ', $id ) ) );
+			$title = __( ucwords( str_replace( [ '-', '_' ], ' ', $field ) ) );
 		}
 		if ( ! isset( $callback ) ) {
 			$callback = [ self::$view, 'field_callback' ];
@@ -839,18 +950,18 @@ class Page {
 			 */
 			unset( $args['callback'] );
 		}
-		if ( isset( $option ) && $option ) {
-			if ( count( $option ) === 1 ) {
-				$args['label_for'] = $option[0]['option'];
+		if ( isset( $options ) && $options ) {
+			if ( count( $options ) === 1 ) {
+				$args['label_for'] = $options[0]['option'];
 			}
 			$option_group = 'group_' . $page;
-			foreach ( $option as $n => $opt ) {
-				$this->_add_option( $opt, $option_group );
+			foreach ( $options as $option ) {
+				$this->_add_option( $option, $option_group );
 			}
 		}
 		$args['page'] = $page;
 		$args['section'] = $section;
-		$this->fields[] = [ $id, $title, $callback, $page, $section, $args ];
+		$this->fields[] = [ $field, $title, $callback, $page, $section, $args ];
 	}
 
 	private function _add_option( Array $args, $option_group ) {

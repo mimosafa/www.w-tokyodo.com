@@ -5,3 +5,6 @@ input.label_l,
 input[type="checkbox"].label_l {
   margin-left: 4px;
 }
+input[type="text"].label_r {
+  margin-right: 4px;
+}
