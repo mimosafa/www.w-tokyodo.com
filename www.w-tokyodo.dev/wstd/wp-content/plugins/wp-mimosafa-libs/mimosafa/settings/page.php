@@ -214,6 +214,8 @@ class Page {
 	 *
 	 * @access public
 	 *
+	 * @uses   mimosafa\WP\Settings\Page::_option_name()
+	 *
 	 * @param  string          $option
 	 * @param  string|callable $callback  Optional.
 	 * @param  array           $arguments Optional.
@@ -239,54 +241,13 @@ class Page {
 	}
 
 	/**
-	 * Set callback for option form
-	 *
-	 * @access public
-	 *
-	 * @param  string|callable $callback
-	 * @param  array           $args     Optional.
-	 * @return mimosafa\WP\Settings\Page
-	 */
-	public function callback( $callback, $sanitize = null ) {
-		if ( $cache =& $this->getCurrentCache() ) {
-			if ( $cache === $this->getCache( 'option' ) ) {
-				if ( is_string( $callback ) && method_exists( self::$view, 'option_callback_' . $callback ) ) {
-					$cache['option_callback_type'] = $callback;
-				}
-				if ( $sanitize ) {
-					$this->sanitize( $sanitize );
-				}
-			}
-			if ( ! isset( $cache['option_callback_type'] ) && is_callable( $callback ) ) {
-				$cache['callback'] = $callback;
-			}
-		}
-		return $this;
-	}
-
-	/**
-	 * Set sanitize callback for option
-	 *
-	 * @access public
-	 *
-	 * @param  callable $sanitize
-	 * @param  array    $args     Optional.
-	 * @return mimosafa\WP\Settings\Page
-	 */
-	public function sanitize( Callable $sanitize ) {
-		if ( $cache =& $this->getCache( 'option' ) ) {
-			$cache['sanitize'] = $sanitize;
-		}
-		return $this;
-	}
-
-	/**
 	 * Misc Properties
 	 *
 	 * - attr_size( int|array $size )
 	 * - attr_cols( int $size )
 	 * - attr_rows( int $size )
 	 * - attr_class( string $class )
+	 * - {$callbak}( [ callable $sanitize ] )
 	 *
 	 * @access public
 	 *
@@ -348,11 +309,19 @@ class Page {
 				}
 			}
 		}
+		else if ( method_exists( self::$view, 'option_callback_' . $name ) ) {
+			/**
+			 * Option Callbacks
+			 */
+			if ( $cache =& $this->getCache( 'option' ) ) {
+				$this->callback( $name, $params ? $params[0] : null );
+			}
+		}
 		return $this;
 	}
 
 	/**
-	 * Set Page Title
+	 * Set Title
 	 *
 	 * @access public
 	 *
@@ -369,7 +338,7 @@ class Page {
 	}
 
 	/**
-	 * Set Page Title as <h2>
+	 * Set Page <h2> Title
 	 *
 	 * @access public
 	 *
@@ -386,7 +355,7 @@ class Page {
 	}
 
 	/**
-	 * Set Menu Title
+	 * Set Page Menu Title
 	 *
 	 * @access public
 	 *
@@ -403,7 +372,7 @@ class Page {
 	}
 
 	/**
-	 * Set capability
+	 * Set Page Capability
 	 *
 	 * @access public
 	 *
@@ -420,7 +389,7 @@ class Page {
 	}
 
 	/**
-	 * Set icon url
+	 * Set Page Icon
 	 *
 	 * @param  string $icon_url
 	 * @return mimosafa\WP\Settings\Page
@@ -431,7 +400,7 @@ class Page {
 	}
 
 	/**
-	 * Set position in admin menu
+	 * Set Page Menu Position
 	 *
 	 * @param  integer $position
 	 * @return mimosafa\WP\Settings\Page
@@ -440,6 +409,97 @@ class Page {
 		$this->position = filter_var( $position, \FILTER_VALIDATE_INT, [ 'options' => [ 'default' => null ] ] );
 		$this->replace_menu = filter_var( $replace, \FILTER_VALIDATE_BOOLEAN );
 		return $this;
+	}
+
+	/**
+	 * Set callback for option form
+	 *
+	 * @access public
+	 *
+	 * @param  string|callable $callback
+	 * @param  array           $args     Optional.
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function callback( $callback, $sanitize = null ) {
+		if ( $cache =& $this->getCurrentCache() ) {
+			if ( $cache === $this->getCache( 'option' ) ) {
+				if ( is_string( $callback ) && method_exists( self::$view, 'option_callback_' . $callback ) ) {
+					$cache['option_callback_type'] = $callback;
+				}
+				if ( $sanitize ) {
+					$this->sanitize( $sanitize );
+				}
+			}
+			if ( ! isset( $cache['option_callback_type'] ) && is_callable( $callback ) ) {
+				$cache['callback'] = $callback;
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Set sanitize callback for option
+	 *
+	 * @access public
+	 *
+	 * @param  callable $sanitize
+	 * @param  array    $args     Optional
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function sanitize( Callable $sanitize ) {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['sanitize'] = $sanitize;
+		}
+		return $this;
+	}
+
+	/**
+	 * Set Option Selectable item(s)
+	 *
+	 * @access public
+	 *
+	 * @param  mixed|array $item
+	 * @param  string      $label [description]
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function item( $item, $label = '' ) {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			if ( is_array( $item ) ) {
+				if ( $item === array_values( $item ) ) {
+					foreach ( $item as $val ) {
+						if ( ! is_array( $val ) && ! is_object( $val ) ) {
+							$this->item( $val );
+						}
+					}
+				} else {
+					foreach ( $item as $key => $val ) {
+						if ( ! is_array( $val ) && ! is_object( $val ) ) {
+							$this->item( $key, $val );
+						}
+					}
+				}
+			}
+			else if ( ! isset( $cache['items'][(string) $item] ) ) {
+				if ( ! isset( $cache['items'] ) ) {
+					$cache['items'] = [];
+				}
+				$cache['items'][$item] = $label ? $label : __( ucwords( str_replace( [ '_', '-' ], ' ', $item ) ) );
+			}
+		}
+		return $this;
+	}
+
+	/**
+	 * Set Option Selectable items
+	 * - Arias of item()
+	 *
+	 * @access public
+	 *
+	 * @param  array $item
+	 * @return mimosafa\WP\Settings\Page
+	 */
+	public function items( Array $items ) {
+		return $this->item( $items );
 	}
 
 	/**
@@ -518,7 +578,7 @@ class Page {
 					if ( $place && in_array( $place, [ 'before', 'after' ], true ) ) {
 						$key .= '_' . $place;
 					} else {
-						$key .= '_after';
+						$key .= $cache === $this->getCache( 'field' ) ? '_before' : '_after';
 					}
 				}
 				if ( isset( $cache[$key] ) ) {
@@ -542,7 +602,7 @@ class Page {
 	public function description( $text, $place = null ) {
 		if ( $cache =& $this->getCurrentCache() ) {
 			if ( $text = filter_var( $text ) ) {
-				if ( $cache === $this->getCache( 'option' ) || $cache === $this->getCache( 'field' ) ) {
+				if ( $cache === $this->getCache( 'option' ) ) {
 					$text = '<p class="description">' . $text . '</p>';
 				} else {
 					$text = '<p>' . $text . '</p>';
@@ -721,7 +781,7 @@ class Page {
 	}
 
 	/**
-	 * Add pages
+	 * Add Pages
 	 *
 	 * @access private
 	 */
@@ -733,7 +793,7 @@ class Page {
 	}
 
 	/**
-	 * Add page
+	 * Add Page
 	 *
 	 * @access private
 	 *
@@ -870,7 +930,7 @@ class Page {
 	}
 
 	/**
-	 * Add section
+	 * Add Section
 	 *
 	 * @access private
 	 *
@@ -921,7 +981,7 @@ class Page {
 	}
 
 	/**
-	 * Add & set field
+	 * Add Field
 	 *
 	 * @access private
 	 *
@@ -964,6 +1024,14 @@ class Page {
 		$this->fields[] = [ $field, $title, $callback, $page, $section, $args ];
 	}
 
+	/**
+	 * Add Option
+	 *
+	 * @access private
+	 *
+	 * @param  array  $args
+	 * @param  string $option_group
+	 */
 	private function _add_option( Array $args, $option_group ) {
 		/**
 		 * @var string   $option
@@ -974,7 +1042,7 @@ class Page {
 	}
 
 	/**
-	 * Setting sections & fields method
+	 * Setting Sections & Fields & Options
 	 *
 	 * @access private
 	 *

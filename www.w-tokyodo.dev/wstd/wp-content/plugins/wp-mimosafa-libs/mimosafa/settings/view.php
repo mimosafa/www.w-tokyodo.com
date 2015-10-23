@@ -123,8 +123,6 @@ class View {
 	public function field_callback( Array $args ) {
 		/**
 		 * @var string $field
-		 * @var string $page
-		 * @var string $section
 		 * @var string $label_for              Optional
 		 * @var string $title                  Optional
 		 * @var array  $options                Optional
@@ -137,8 +135,10 @@ class View {
 		if ( isset( $options ) && $options ) {
 			$i = 0;
 			foreach ( $options as $option ) {
-				$this->do_option_callback( $option, $i );
-				$i++;
+				if ( isset( $option['option'] ) ) {
+					$this->do_option_callback( $option, $i );
+					$i++;
+				}
 			}
 		}
 		echo isset( $content_after ) ? $content_after : '';
@@ -160,6 +160,7 @@ class View {
 		 * @var boolean  $p                      Optional
 		 * @var string   $content_{before|after} Optional
 		 * @var string   $label_{before|after}   Optional
+		 * @var array    $items                  Optional
 		 * ..
 		 */
 		extract( $args, \EXTR_SKIP );
@@ -169,13 +170,16 @@ class View {
 		if ( isset( $option_callback_type ) ) {
 			$callback = [ $this, 'option_callback_' . $option_callback_type ];
 		}
+		else if ( isset( $items ) && $items ) {
+			$callback = [ $this, 'option_callback_select' ];
+		}
 		echo call_user_func( $callback, $args );
 		echo isset( $content_after ) ? $content_after : '';
 		echo isset( $p ) ? '</p>' : '';
 	}
 
 	/**
-	 * Drow Form Element Checkbox
+	 * Render <input type="CHECKBOX">
 	 *
 	 * @access private
 	 *
@@ -213,18 +217,54 @@ EOF;
 		/**
 		 * Return HTML
 		 */
-		return apply_filters( 'mimosafa_settings_option_form_html', $html, $option );
+		return apply_filters( 'mimosafa_settings_option_form_html', trim( $html ), $option );
 	}
 
 	/**
-	 * Drow Form Element Imput Text
+	 * Render <INPUT> - Common
 	 *
 	 * @access private
 	 *
 	 * @param  array $args
 	 * @return void
 	 */
-	public function option_callback_text( Array $args ) {
+	private function _option_callback_input( Array $args ) {
+		/**
+		 * @var string $type
+		 * @var string $option
+		 * @var string $val
+		 * @var string $attr
+		 * @var string $before
+		 * @var string $after
+		 */
+		extract( $args );
+		$option = esc_attr( $option );
+		$attr = trim( $attr );
+		$label_open  = $before || $after ? '<label>' : '';
+		$label_close = $label_open ? '</label>' : '';
+		/**
+		 * Render HTML
+		 */
+		$html = <<<EOF
+{$label_open}
+	{$before}<input type="{$type}" name="{$option}" id="{$option}" value="{$val}" {$attr}>{$after}
+{$label_close}
+EOF;
+		/**
+		 * Return HTML
+		 */
+		return apply_filters( 'mimosafa_settings_option_form_html', trim( $html ), $option );
+	}
+
+	/**
+	 * Render <input type="TEXT">
+	 *
+	 * @access private
+	 *
+	 * @param  array $args
+	 * @return void
+	 */
+	private function option_callback_text( Array $args ) {
 		/**
 		 * @var string $option
 		 * @var int    $size                 Optional
@@ -233,18 +273,16 @@ EOF;
 		 * @var string $class                Optional
 		 */
 		extract( $args );
-		$escOpt = esc_attr( $option );
-		$val = esc_attr( get_option( $option ) );
-		$label = isset( $label ) ? $label : '';
+		static $type = 'text';
+		$val = get_option( $option );
 		$class = isset( $class ) ? $class : '';
-		if ( $label_before  = isset( $label_before )  ? $label_before  : $label ) {
+		$label = isset( $label ) ? $label : '';
+		if ( $before  = isset( $label_before )  ? $label_before  : $label ) {
 			$class .= ' label_before';
 		}
-		if ( $label_after = isset( $label_after ) ? $label_after : '' ) {
+		if ( $after = isset( $label_after ) ? $label_after : '' ) {
 			$class .= ' label_after';
 		}
-		$label_open  = $label_before || $label_after ? '<label>' : '';
-		$label_close = $label_open ? '</label>' : '';
 		$attr = '';
 		if ( isset( $size ) ) {
 			$attr .= ' size="' . (int) $size . '"';
@@ -253,29 +291,20 @@ EOF;
 			$class .= ' regular-text';
 		}
 		$attr .= ' class="' . esc_attr( trim( $class ) ) . '"';
-		/**
-		 * Render HTML
-		 */
-		$html = <<<EOF
-{$label_open}
-	{$label_before}<input type="text" name="{$escOpt}" id="{$escOpt}" value="{$val}"{$attr}>{$label_after}
-{$label_close}
-EOF;
-		/**
-		 * Return HTML
-		 */
-		return apply_filters( 'mimosafa_settings_option_form_html', $html, $option );
+		return $this->_option_callback_input(
+			compact( 'type', 'option', 'val', 'attr', 'before', 'after' )
+		);
 	}
 
 	/**
-	 * Drow Form Element Textarea
+	 * Render <TEXTAREA>
 	 *
 	 * @access private
 	 *
 	 * @param  array $args
 	 * @return void
 	 */
-	public function option_callback_textarea( Array $args ) {
+	private function option_callback_textarea( Array $args ) {
 		/**
 		 * @var string $option
 		 * @var int    $cols                 Optional
@@ -319,17 +348,33 @@ EOF;
 		/**
 		 * Return HTML
 		 */
-		return apply_filters( 'mimosafa_settings_option_form_html', $html, $option );
+		return apply_filters( 'mimosafa_settings_option_form_html', trim( $html ), $option );
 	}
 
+	/**
+	 * Render <SELECT>
+	 *
+	 * @param  array $args
+	 * @return void
+	 */
 	private function option_callback_select( Array $args ) {
 		/**
-		 * @var string $option
+		 * @var string  $option
+		 * @var array   $items
+		 * @var string  $label        Optional
+		 * @var string  $label_before Optional
+		 * @var string  $label_after  Optional
+		 * @var string  $class        Optional
+		 * @var boolean $has_blank    Optional
 		 */
 		extract( $args );
+		if ( ! isset( $items ) || ! $items ) {
+			return;
+		}
 		$escOpt = esc_attr( $option );
-		$label = isset( $label ) ? $label : '';
+		$val = get_option( $option );
 		$class = isset( $class ) ? $class : '';
+		$label = isset( $label ) ? $label : '';
 		if ( $label_before  = isset( $label_before )  ? $label_before  : $label ) {
 			$class .= ' label_before';
 		}
@@ -340,6 +385,13 @@ EOF;
 		$label_close = $label_open ? '</label>' : '';
 		$attr = '';
 		//
+		$options = '';
+		if ( isset( $has_blank ) ? filter_var( $has_blank, \FILTER_VALIDATE_BOOLEAN ) : true ) {
+			$options .= '<option>' . apply_filters( 'mimosafa_settings_select_option_blank_label', '-', $option ) . '</option>';
+		}
+		foreach ( $items as $key => $label ) {
+			$options .= '<option value="' . esc_attr( $key ) . '" ' . selected( $val, $key, false ) .'>' . $label . '</option>';
+		}
 		/**
 		 * Render HTML
 		 */
@@ -347,7 +399,7 @@ EOF;
 {$label_open}
 	{$label_before}
 	<select name="{$escOpt}" id="{$escOpt}"{$attr}>
-		{$items}
+		{$options}
 	</select>
 	{$label_after}
 {$label_close}
@@ -355,7 +407,26 @@ EOF;
 		/**
 		 * Return HTML
 		 */
-		return apply_filters( 'mimosafa_settings_option_form_html', $html, $option );
+		return apply_filters( 'mimosafa_settings_option_form_html', trim( $html ), $option );
+	}
+
+	/**
+	 * Checkboxes
+	 *
+	 * @access private
+	 *
+	 * @param  array $args
+	 * @return void
+	 */
+	private function option_callback_checkboxes( Array $args ) {
+		/**
+		 * @var string $option
+		 * @var array  $items
+		 */
+		extract( $args );
+		if ( ! isset( $items ) || ! $items ) {
+			return;
+		}
 	}
 
 }

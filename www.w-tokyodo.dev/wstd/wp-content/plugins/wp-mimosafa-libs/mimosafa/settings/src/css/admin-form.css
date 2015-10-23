@@ -1,10 +1,12 @@
 /**
  * Settings Page Styles
+ *
+ * <input>/<label> @todo rtl
  */
-input.label_l,
-input[type="checkbox"].label_l {
+input.label_before,
+input[type="checkbox"].label_before {
   margin-left: 4px;
 }
-input[type="text"].label_r {
+input[type="text"].label_after {
   margin-right: 4px;
 }
