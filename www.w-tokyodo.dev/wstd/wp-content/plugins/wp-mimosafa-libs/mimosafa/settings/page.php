@@ -503,6 +503,16 @@ class Page {
 	}
 
 	/**
+	 *
+	 */
+	public function multiple() {
+		if ( $cache =& $this->getCache( 'option' ) ) {
+			$cache['multiple'] = true;
+		}
+		return $this;
+	}
+
+	/**
 	 * Set Option Form Label
 	 *
 	 * @todo   rtl
@@ -1013,6 +1023,9 @@ class Page {
 		if ( isset( $options ) && $options ) {
 			if ( count( $options ) === 1 ) {
 				$args['label_for'] = $options[0]['option'];
+			}
+			else if ( count( $options ) > 1 ) {
+				$args['label_for'] = $field;
 			}
 			$option_group = 'group_' . $page;
 			foreach ( $options as $option ) {

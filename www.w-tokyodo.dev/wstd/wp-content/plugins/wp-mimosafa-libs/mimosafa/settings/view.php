@@ -131,6 +131,8 @@ class View {
 		 * ..
 		 */
 		extract( $args );
+		$fs = isset( $options ) && count( $options ) > 1 ? '<fieldset id="' . $field . '">' : '';
+		echo $fs ?: '';
 		echo isset( $content_before ) ? $content_before : '';
 		if ( isset( $options ) && $options ) {
 			$i = 0;
@@ -142,6 +144,7 @@ class View {
 			}
 		}
 		echo isset( $content_after ) ? $content_after : '';
+		echo $fs ? '</fieldset>' : '';
 	}
 
 	/**
@@ -277,12 +280,9 @@ EOF;
 		$val = get_option( $option );
 		$class = isset( $class ) ? $class : '';
 		$label = isset( $label ) ? $label : '';
-		if ( $before  = isset( $label_before )  ? $label_before  : $label ) {
-			$class .= ' label_before';
-		}
-		if ( $after = isset( $label_after ) ? $label_after : '' ) {
-			$class .= ' label_after';
-		}
+		$before  = isset( $label_before )  ? $label_before  : $label;
+		$after = isset( $label_after ) ? $label_after : '';
+		$class .= $before || $after ? ' labeled' : '';
 		$attr = '';
 		if ( isset( $size ) ) {
 			$attr .= ' size="' . (int) $size . '"';
@@ -427,6 +427,25 @@ EOF;
 		if ( ! isset( $items ) || ! $items ) {
 			return;
 		}
+		$escOpt = esc_attr( $option );
+		$val = get_option( $option );
+		$options = '';
+		foreach ( $items as $key => $lbl ) {
+			$options .= '<label><input type="checkbox"' . checked( $val, $key, false ) . '>' . $lbl . '</label>'; 
+		}
+		//
+		/**
+		 * Render HTML
+		 */
+		$html = <<<EOF
+<fieldset id="{$escOpt}">
+	{$options}
+</fieldset>
+EOF;
+		/**
+		 * Return HTML
+		 */
+		return apply_filters( 'mimosafa_settings_option_form_html', trim( $html ), $option );
 	}
 
 }

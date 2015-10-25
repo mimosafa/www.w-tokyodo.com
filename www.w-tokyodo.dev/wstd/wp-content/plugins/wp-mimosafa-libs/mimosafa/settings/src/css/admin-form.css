@@ -3,10 +3,10 @@
  *
  * <input>/<label> @todo rtl
  */
-input.label_before,
 input[type="checkbox"].label_before {
   margin-left: 4px;
 }
-input[type="text"].label_after {
+input[type="text"].labeled {
   margin-right: 4px;
+  margin-left: 4px;
 }
