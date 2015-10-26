@@ -1,9 +1,16 @@
 <?php
 /*
-Plugin Name: Workstore Tokyo Do
+Plugin Name: Workstore Tokyo Do Core Plugin
 Author: Toshimichi Mimoto
 */
-
-foreach ( glob( dirname( __FILE__ ) . '/files/{*.php}', GLOB_BRACE ) as $php ) {
-	require $php;
+add_action( 'plugins_loaded', '_init_workstoretokyodo_plugin' );
+function _init_workstoretokyodo_plugin() {
+	if ( class_exists( 'mimosafa\\ClassLoader' ) ) {
+		$params = [
+			'hyphenate_classname' => true,
+			'hyphenate_namespace' => true
+		];
+		mimosafa\ClassLoader::register( 'WSTD', __DIR__ . '/inc', $params );
+		WSTD\Bootstrap::getInstance();
+	}
 }
