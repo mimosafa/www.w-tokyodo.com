@@ -3,7 +3,7 @@
  * Enqueue google maps api for Map of Office
  */
 add_action( 'wp_enqueue_scripts', function() {
-	wp_enqueue_script( 'google-maps', 'http://maps.google.com/maps/api/js?sensor=false' );
+	wp_enqueue_script( 'google-maps', '//maps.google.com/maps/api/js?sensor=false' );
 } );
 
 /**
@@ -16,6 +16,51 @@ add_action( 'wstd_header_image', function() { ?>
 } );
 
 get_header(); ?>
+
+<?php
+/**
+ * Book
+ */
+# if ( is_user_logged_in() ) { ?>
+
+<style>
+#wstd-recommend-book { padding: 10px 0 30px; background-color: #f0f0f0; }
+#wstd-recommend-book a.book-img { display: block; box-shadow: 2px 2px 2px rgba(0,0,0,.25); }
+#wstd-recommend-book img { max-width: 100%; height: auto; }
+#isbn978-4-7511-1143-7 { margin-top: 20px; }
+</style>
+<div class="container-fluid wstd-section" id="wstd-recommend-book">
+	<div class="row">
+		<div class="col-xs-6 col-sm-4 col-sm-offset-1 col-md-3 col-lg-2 col-lg-offset-2">
+			<a href="http://www.amazon.co.jp/dp/4751111434" target="_blank" id="isbn978-4-7511-1143-7" class="book-img">
+				<img src="<?php echo get_stylesheet_directory_uri(); ?>/img/isbn978-4-7511-1143-7.jpg">
+			</a>
+		</div>
+		<div class="col-xs-6 col-sm-6 col-md-7 col-lg-6">
+			<h2 class="h3">ネオ屋台村村長の本、好評発売中</h2>
+			<p class="h2" style="line-height:1.15">キッチンカーの移動販売 <small style="color: #333;">―好きなことやって、自分の足あと残そうよ</small></p>
+			<blockquote style="border-left-color: #ccc; color: #888;">
+				<p style="line-height: 1.7;">僕は移動販売で、自分の生きた証を残すことができた。<br>
+				みんな、本当にありがとう。<br>
+				一緒にやろうよ、キッチンカーの移動販売！<br>
+				好きなことを思い切りやって、自分の足あとを残そうよ！</p>
+				<small class="pull-right">「はじめに」より引用</small>
+			</blockquote>
+			<small>
+			<a href="http://asahiya-jp.com/scb/shop/shop.cgi?No=1020" target="_blank"><i class="fa fa-building"></i> 旭屋出版オンラインショップ</a>
+			<br>
+			<a href="http://www.amazon.co.jp/dp/4751111434" target="_blank"><i class="fa fa-amazon"></i> キッチンカーの移動販売―好きなことやって、自分の足あと残そうよ | 烏川 清治 | 本 | Amazon.co.jp</a>
+			</small>
+		</div>
+	</div>
+</div>
+
+<?php
+/**
+ * Book End
+ */
+# } ?>
+
 <div class="container wstd-section" id="wstd-home-philosophy">
 <div class="row">
 <div class="col-md-10 col-md-offset-1 col-lg-8 col-lg-offset-2">
@@ -137,4 +182,4 @@ var marker = new google.maps.Marker({
 <?php
 } );
 
-get_footer(); ?>
+get_footer();

@@ -1,11 +1,17 @@
-<!DOCTYPE html>
+<?php
+/**
+ * Workstore Tokyo Do Header.PHP
+ *
+ * @since 0.0
+ */
+
+?><!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=1240, initial-scale=.25">
 <meta name="format-detection" content="telephone=no">
-<title><?php wp_title( '|', 1, 'right' ); ?>ワークストア・トウキョウドゥ</title>
 <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
