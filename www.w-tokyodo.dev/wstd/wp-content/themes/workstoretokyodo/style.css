@@ -4,7 +4,7 @@ Theme Name: 株式会社ワークストア・トウキョウドゥ テーマ
 Theme URI: http://www.w-tokyodo.com/
 Description: 株式会社ワークストア・トウキョウドゥ 専用テーマ
 Author: mimosafa.
-Version: 0.0
+Version: 0.1
 */
 
 html {
@@ -31,11 +31,11 @@ areaSiteHeader & header-legacy container
 areaSiteHeader
 ================================================ */
 #areaSiteHeader {
-  background: url(./img/bg_head_top.png) left top repeat-x;
+  background-color: #0068b7;
+  background: linear-gradient(#1a77be, #0f619f);
   height: 30px;
 }
-#areaSiteHeader a,
-#areaSiteHeader span {
+.packOff {
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -48,46 +48,53 @@ areaSiteHeader
   float: left;
 }
 #wstdLogo a {
-  background-image: url(./img/ttl_site_header.png);
+  background-image: url(./img/ttl_site_header-24.png);
   height: 22px;
-  width: 195px;
+  width: 232px;
 }
 #wstdLogo span {
-  background-image: url(./img/ttl_wstd_copy.png);
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 2em;
   height: 22px;
   width: 410px;
 }
-#areaSiteHeader ul {
+#wstdCompanyNav {
   float: right;
   margin: 7px 0 9px;
 }
-#areaSiteHeader li {
+#wstdCompanyNav > li {
   float: left;
   padding-left: 14px;
   list-style: none;
 }
-#wstdCompany {
-  background-image: url(./img/btn_about_company.png);
-  width: 68px;
-  height: 14px;
+#wstdCompanyNav > li > a {
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1em;
+  letter-spacing: .1em;
 }
-#wstdContact {
-  background-image: url(./img/btn_contact.png);
-  width: 100px;
-  height: 14px;
+#wstdCompanyNav > li > a:hover,
+#wstdCompanyNav > li > a:focus {
+  text-decoration: none;
 }
 
 /* ================================================
 header-legacy
 ================================================ */
 #header-legacy {
-  background: url(./img/bg_wstd_nav_lgcy.png) left top repeat-x;
+  height: 69px;
+  background-color: #1f73b9;
+  background-image: linear-gradient(to bottom, #00499d 0%, #3184c3 93%, #0066b6 94%);
 }
 .division-neoponte #header-legacy {
   background: url(./img/bg_wstd_nav_lgcy_neoponte.png) left top repeat-x;
 }
 .division-sharyobu #header-legacy {
-  background: url(./img/bg_wstd_nav_lgcy_sharyobu.png) left top repeat-x;
+  background-color: #c02523;
+  background-image: linear-gradient(to bottom, #bb1913 0%, #cc4c4f 93%, #c02027 94%);
 }
 #siteid {
   float: left;
@@ -109,7 +116,7 @@ header-legacy
 }
 .division-direct #siteid > a,
 .division-direct #siteid > h1 {
-  background: url(./img/ttl_tokyodo.png) left top no-repeat;
+  background: url(./img/ttl_tokyodo-24.png) left top no-repeat;
   width: 255px;
   height: 40px;
 }
@@ -126,7 +133,7 @@ header-legacy
 }
 .division-sharyobu #siteid > a,
 .division-sharyobu #siteid > h1 {
-  background: url(./img/ttl_sharyobu.png) left top no-repeat;
+  background: url(./img/ttl_sharyobu-24.png) left top no-repeat;
   width: 223px;
   height: 52px;
 }
@@ -172,7 +179,8 @@ header-legacy
   opacity: 1;
 }
 #btn-tokyodo {
-  background-image: url(./img/bg_wstd_nav_lgcy.png);
+  background-color: #1f73b9;
+  background-image: linear-gradient(to bottom, #00499d 0%, #3184c3 93%, #0066b6 94%);
 }
 #btn-tokyodo > a {
   background-image: url(./img/btn_tokyodo.png);
@@ -182,7 +190,8 @@ header-legacy
   border-color: #0090ff;
 }
 #btn-neostall {
-  background-image: url(./img/bg_wstd_nav_lgcy_neoyatai.png);
+  background-color: #f08a08;
+  background-image: linear-gradient(to bottom, #ed7900 0%, #f4ab31 93%, #f39700 94%);
 }
 #btn-neostall > a {
   background-image: url(./img/btn_neoyatai.png);
@@ -192,7 +201,8 @@ header-legacy
   border-color: #ffa100;
 }
 #btn-neoponte {
-  background-image: url(./img/bg_wstd_nav_lgcy_neoponte.png);
+  background-color: #1b972f;
+  background-image: linear-gradient(to bottom, #13861d 0%, #43b75f 93%, #14a73a 94%);
 }
 #btn-neoponte > a {
   background-image: url(./img/btn_neoponte.png);
@@ -202,7 +212,8 @@ header-legacy
   border-color: #00ff5d;
 }
 #btn-sharyobu {
-  background-image: url(./img/bg_wstd_nav_lgcy_sharyobu.png);
+  background-color: #c02523;
+  background-image: linear-gradient(to bottom, #bb1913 0%, #cc4c4f 93%, #c02027 94%);
 }
 #btn-sharyobu > a {
   background-image: url(./img/btn_sharyobu.png);

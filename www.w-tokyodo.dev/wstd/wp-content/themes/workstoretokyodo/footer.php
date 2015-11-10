@@ -1,8 +1,3 @@
-<?php /* ?>
-<pre>
-<?php //global $wp_filter; var_dump( $wp_filter['redirect_post_location'] ); ?>
-</pre>
-<?php //*/ ?>
 </div>
 <footer id="wstd-footer" class="container-fluid">
   <div class="row">

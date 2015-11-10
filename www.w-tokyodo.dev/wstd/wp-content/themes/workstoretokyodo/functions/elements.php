@@ -15,7 +15,7 @@ function area_site_header_legacy() {
      */
     function wstd_logo() {
         if ( is_division() )
-            echo '<a href="' . home_url() . '">Workstore Tokyo Do</a>';
+            echo '<a href="' . home_url() . '" class="packOff">Workstore Tokyo Do</a>';
         else
             echo '<span>食を通じて「賑わい」と「笑顔」と「思い出」を作るプロフェッショナル!!</span>';
     }
@@ -40,9 +40,9 @@ function area_site_header_legacy() {
             $href = get_permalink( $division );
         }
         if ( is_home() || ( is_division() && is_page_top() ) )
-            echo '<h1>' . $string . '</h1>';
+            echo '<h1 class="packOff">' . $string . '</h1>';
         else
-            echo '<a href="' . $href . '">' . $string . '</a>';
+            echo '<a href="' . $href . '" class="packOff">' . $string . '</a>';
     }
 
     /**
@@ -72,9 +72,10 @@ function area_site_header_legacy() {
 <div id="wstdLogo">
 <?php wstd_logo(); ?>
 </div>
-<ul>
-<li><a id="wstdCompany" href="/#company">会社案内</a></li>
-<li><a id="wstdContact" href="/contact<?php contact_hash(); ?>">お問い合わせ</a></li>
+<ul id="wstdCompanyNav">
+<li><a href="#" class="hide"><i class="fa fa-child"></i> 採用情報</a></li>
+<li><a href="/#company"><i class="fa fa-building-o"></i> 会社案内</a></li>
+<li><a href="/contact<?php contact_hash(); ?>"><i class="fa fa-envelope"></i> お問い合わせ</a></li>
 </ul>
 </div>
 </div><!-- /#areaSiteHeader -->
