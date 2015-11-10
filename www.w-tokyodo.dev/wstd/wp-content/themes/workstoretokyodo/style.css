@@ -31,11 +31,11 @@ areaSiteHeader & header-legacy container
 areaSiteHeader
 ================================================ */
 #areaSiteHeader {
-  background: url(./img/bg_head_top.png) left top repeat-x;
+  background-color: #0068b7;
+  background: linear-gradient(#1a77be, #0f619f);
   height: 30px;
 }
-#areaSiteHeader a,
-#areaSiteHeader span {
+.packOff {
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -48,40 +48,52 @@ areaSiteHeader
   float: left;
 }
 #wstdLogo a {
-  background-image: url(./img/ttl_site_header.png);
+  background-image: url(./img/ttl_site_header-24.png);
   height: 22px;
-  width: 195px;
+  width: 232px;
 }
 #wstdLogo span {
-  background-image: url(./img/ttl_wstd_copy.png);
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 2em;
   height: 22px;
   width: 410px;
 }
-#areaSiteHeader ul {
+#wstdCompanyNav {
   float: right;
   margin: 7px 0 9px;
 }
-#areaSiteHeader li {
+#wstdCompanyNav > li {
   float: left;
   padding-left: 14px;
   list-style: none;
 }
+#wstdCompanyNav > li > a {
+  color: #fff;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 1em;
+  letter-spacing: .1em;
+}
+#wstdCompanyNav > li > a:hover,
+#wstdCompanyNav > li > a:focus {
+  text-decoration: none;
+}
 #wstdCompany {
-  background-image: url(./img/btn_about_company.png);
   width: 68px;
-  height: 14px;
 }
 #wstdContact {
-  background-image: url(./img/btn_contact.png);
   width: 100px;
-  height: 14px;
 }
 
 /* ================================================
 header-legacy
 ================================================ */
 #header-legacy {
-  background: url(./img/bg_wstd_nav_lgcy.png) left top repeat-x;
+  height: 69px;
+  background-color: #1f73b9;
+  background-image: linear-gradient(to bottom, #00499d 0%, #3184c3 93%, #0066b6 94%);
 }
 .division-neoponte #header-legacy {
   background: url(./img/bg_wstd_nav_lgcy_neoponte.png) left top repeat-x;
@@ -109,7 +121,7 @@ header-legacy
 }
 .division-direct #siteid > a,
 .division-direct #siteid > h1 {
-  background: url(./img/ttl_tokyodo.png) left top no-repeat;
+  background: url(./img/ttl_tokyodo-24.png) left top no-repeat;
   width: 255px;
   height: 40px;
 }

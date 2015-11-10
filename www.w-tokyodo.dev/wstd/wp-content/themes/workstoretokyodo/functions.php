@@ -148,7 +148,7 @@ function workstoretokyodo_theme_setup() {
 			 * styles
 			 */
 			wp_enqueue_style( 'bootstrap', '//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.css', array(), '3.1.1' );
-			wp_enqueue_style( 'font-awesone', '//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css', array( 'bootstrap' ), '4.0.3' );
+			wp_enqueue_style( 'font-awesone', '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', array( 'bootstrap' ), '4.4.0' );
 			wp_enqueue_style( 'wstd', get_stylesheet_uri(), array(), date( 'YmdHis', filemtime( get_stylesheet_directory() . '/style.css' ) ) );
 			// wstd icon font
 			$path = '/css/tokyodo2014.css';
