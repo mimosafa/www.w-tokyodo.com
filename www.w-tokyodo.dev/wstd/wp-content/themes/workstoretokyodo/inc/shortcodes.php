@@ -1,7 +1,19 @@
 <?php
+/**
+ * Short Codes
+ *
+ * @since 0.1
+ */
 
-add_shortcode( 'pt_works', 'show_works' );
-function show_works( $atts ) {
+/**
+ * Show Posts Short Code
+ * - Code: 'pt_work'
+ * - Post Type: Event
+ * - Taxonomy: Works
+ *
+ * @since 0.0
+ */
+function wstd_show_works( $atts ) {
 	$args = array( 'post_type' => 'event', 'numberposts' => -1, 'order' => 'ASC' );
 	$term_works = array( 'management', 'collaboration', 'store', 'official-bar' );
 	extract( shortcode_atts( array(
@@ -21,20 +33,4 @@ function show_works( $atts ) {
 	$str .= ' and more...';
 	return $str;
 }
-
-/**
- * admin bar を消す
- */
-/*
-function kill_admin_bar() {
-    add_filter( 'show_admin_bar', '__return_false', 1000 );
-    if ( class_exists( 'crazy_bone' ) ) {
-        function deregister() {
-            wp_deregister_script( 'wp-pointer' );
-            wp_deregister_style( 'wp-pointer' );
-        }
-        add_action( 'wp_enqueue_scripts', 'deregister', 9999 );
-    }
-}
-add_action( 'init', 'kill_admin_bar' );
-*/
+add_shortcode( 'pt_works', 'wstd_show_works' );

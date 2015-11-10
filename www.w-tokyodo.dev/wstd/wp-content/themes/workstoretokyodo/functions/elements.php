@@ -73,9 +73,9 @@ function area_site_header_legacy() {
 <?php wstd_logo(); ?>
 </div>
 <ul id="wstdCompanyNav">
-<li><a id="" href="#"><i class="fa fa-child"></i> 採用情報</a></li>
-<li><a id="wstdCompany" href="/#company"><i class="fa fa-building-o"></i> 会社案内</a></li>
-<li><a id="wstdContact" href="/contact<?php contact_hash(); ?>"><i class="fa fa-envelope"></i> お問い合わせ</a></li>
+<li><a href="#" class="hide"><i class="fa fa-child"></i> 採用情報</a></li>
+<li><a href="/#company"><i class="fa fa-building-o"></i> 会社案内</a></li>
+<li><a href="/contact<?php contact_hash(); ?>"><i class="fa fa-envelope"></i> お問い合わせ</a></li>
 </ul>
 </div>
 </div><!-- /#areaSiteHeader -->

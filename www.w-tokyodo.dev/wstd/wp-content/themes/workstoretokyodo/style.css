@@ -4,7 +4,7 @@ Theme Name: 株式会社ワークストア・トウキョウドゥ テーマ
 Theme URI: http://www.w-tokyodo.com/
 Description: 株式会社ワークストア・トウキョウドゥ 専用テーマ
 Author: mimosafa.
-Version: 0.0
+Version: 0.1
 */
 
 html {
@@ -80,12 +80,6 @@ areaSiteHeader
 #wstdCompanyNav > li > a:focus {
   text-decoration: none;
 }
-#wstdCompany {
-  width: 68px;
-}
-#wstdContact {
-  width: 100px;
-}
 
 /* ================================================
 header-legacy
@@ -99,7 +93,8 @@ header-legacy
   background: url(./img/bg_wstd_nav_lgcy_neoponte.png) left top repeat-x;
 }
 .division-sharyobu #header-legacy {
-  background: url(./img/bg_wstd_nav_lgcy_sharyobu.png) left top repeat-x;
+  background-color: #c02523;
+  background-image: linear-gradient(to bottom, #bb1913 0%, #cc4c4f 93%, #c02027 94%);
 }
 #siteid {
   float: left;
@@ -138,7 +133,7 @@ header-legacy
 }
 .division-sharyobu #siteid > a,
 .division-sharyobu #siteid > h1 {
-  background: url(./img/ttl_sharyobu.png) left top no-repeat;
+  background: url(./img/ttl_sharyobu-24.png) left top no-repeat;
   width: 223px;
   height: 52px;
 }
@@ -184,7 +179,8 @@ header-legacy
   opacity: 1;
 }
 #btn-tokyodo {
-  background-image: url(./img/bg_wstd_nav_lgcy.png);
+  background-color: #1f73b9;
+  background-image: linear-gradient(to bottom, #00499d 0%, #3184c3 93%, #0066b6 94%);
 }
 #btn-tokyodo > a {
   background-image: url(./img/btn_tokyodo.png);
@@ -194,7 +190,8 @@ header-legacy
   border-color: #0090ff;
 }
 #btn-neostall {
-  background-image: url(./img/bg_wstd_nav_lgcy_neoyatai.png);
+  background-color: #f08a08;
+  background-image: linear-gradient(to bottom, #ed7900 0%, #f4ab31 93%, #f39700 94%);
 }
 #btn-neostall > a {
   background-image: url(./img/btn_neoyatai.png);
@@ -204,7 +201,8 @@ header-legacy
   border-color: #ffa100;
 }
 #btn-neoponte {
-  background-image: url(./img/bg_wstd_nav_lgcy_neoponte.png);
+  background-color: #1b972f;
+  background-image: linear-gradient(to bottom, #13861d 0%, #43b75f 93%, #14a73a 94%);
 }
 #btn-neoponte > a {
   background-image: url(./img/btn_neoponte.png);
@@ -214,7 +212,8 @@ header-legacy
   border-color: #00ff5d;
 }
 #btn-sharyobu {
-  background-image: url(./img/bg_wstd_nav_lgcy_sharyobu.png);
+  background-color: #c02523;
+  background-image: linear-gradient(to bottom, #bb1913 0%, #cc4c4f 93%, #c02027 94%);
 }
 #btn-sharyobu > a {
   background-image: url(./img/btn_sharyobu.png);

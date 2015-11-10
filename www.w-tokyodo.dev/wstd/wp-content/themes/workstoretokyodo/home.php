@@ -3,7 +3,7 @@
  * Enqueue google maps api for Map of Office
  */
 add_action( 'wp_enqueue_scripts', function() {
-	wp_enqueue_script( 'google-maps', 'http://maps.google.com/maps/api/js?sensor=false' );
+	wp_enqueue_script( 'google-maps', '//maps.google.com/maps/api/js?sensor=false' );
 } );
 
 /**
@@ -182,4 +182,4 @@ var marker = new google.maps.Marker({
 <?php
 } );
 
-get_footer(); ?>
+get_footer();
