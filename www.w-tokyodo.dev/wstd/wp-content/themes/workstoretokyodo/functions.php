@@ -1,4 +1,20 @@
 <?php
+/**
+ * Corporate Web Site Theme for Workstore Tokyo Do
+ *
+ * @package WordPress
+ *
+ * @author  Toshimichi Mimoto <mimosafa@gmail.com>
+ */
+
+/**
+ * Required Plugin: WordPress Libraries by mimosafa
+ */
+if ( ! class_exists( 'mimosafa\\ClassLoader' ) ) {
+	return;
+}
+mimosafa\ClassLoader::register( 'WSTD', __DIR__ . '/inc' );
+WSTD\Theme::init();
 
 function wstd_301_redirect() {
 	if ( '/company' === $_SERVER['REQUEST_URI'] )
@@ -109,35 +125,6 @@ add_action( 'after_setup_theme', function() {
  * Workstore Tokyo Do, theme setup
  */
 function workstoretokyodo_theme_setup() {
-
-	/**
-	 * default scripts and styles enqueue
-	 * - bootstrap 3.1.1
-	 * - fontawesome 4.0.3
-	 * - modernizr 2.7.1
-	 * ...and theme style, script
-	 */
-	add_action( 'wp_enqueue_scripts', function() {
-		if ( !is_admin() ) {
-
-			/**
-			 * styles
-			 */
-			wp_enqueue_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css', array(), '3.3.5' );
-			wp_enqueue_style( 'font-awesone', '//maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css', array( 'bootstrap' ), '4.0.3' );
-			wp_enqueue_style( 'wstd', get_stylesheet_uri(), array(), date( 'YmdHis', filemtime( get_stylesheet_directory() . '/style.css' ) ) );
-			// wstd icon font
-			$path = '/css/tokyodo2014.css';
-			wp_enqueue_style( 'tokyodo2014', get_stylesheet_directory_uri() . $path, array(), date( 'YmdHis', filemtime( get_stylesheet_directory() . $path ) ) );
-
-			/**
-			 * scripts
-			 */
-			wp_enqueue_script( 'wstd', get_stylesheet_directory_uri() . '/js/script.js', array( 'jquery' ), date( 'YmdHis', filemtime( get_stylesheet_directory() . '/js/script.js' ) ), true );
-			wp_enqueue_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array( 'jquery' ), '3.3.5', true );
-
-		}
-	} );
 
 	/**
 	 * カスタム投稿タイプ - event-works
