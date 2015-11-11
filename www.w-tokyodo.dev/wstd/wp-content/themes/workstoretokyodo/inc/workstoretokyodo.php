@@ -22,6 +22,26 @@ function wstd_body_class( $classes ) {
 }
 
 /**
+ * Division Template
+ *
+ * @since 0.1
+ */
+add_filter( 'template_include', 'wstd_get_division_template' );
+function wstd_get_division_template( $template ) {
+	if ( is_division() ) {
+		$templates = [];
+		if ( is_page_top() ) {
+			$templates[] = 'division-top.php';
+		}
+		$templates[] = 'division.php';
+		if ( $located = locate_template( $templates ) ) {
+			return $located;
+		}
+	}
+	return $template;
+}
+
+/**
  * Functions
  *
  */
@@ -89,7 +109,7 @@ if ( ! function_exists( 'get_division' ) ) {
 	 * @param  string      $return Optional
 	 * @return WP_Post|mixed|null
 	 */
-	function get_division( $post = 0, $return = null ) {
+	function get_division( $post = null, $return = null ) {
 		if ( $post = get_post( $post ) ) {
 			if ( $post->post_type === 'page' ) {
 				/**

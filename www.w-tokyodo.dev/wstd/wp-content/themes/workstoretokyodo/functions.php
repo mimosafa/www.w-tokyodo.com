@@ -14,32 +14,19 @@
  *
  * @since 0.1
  */
-add_action( 'after_setup_theme', function() {
-	require_once 'inc/redirects.php';
-	require_once 'inc/setup.php';
-	require_once 'inc/repositories.php';
-	require_once 'inc/googleanalytics.php';
-	require_once 'inc/workstoretokyodo.php';
-	require_once 'inc/shortcodes.php';
-} );
+require_once 'inc/redirects.php';
+require_once 'inc/setup.php';
+require_once 'inc/repositories.php';
+require_once 'inc/googleanalytics.php';
+require_once 'inc/workstoretokyodo.php';
+require_once 'inc/shortcodes.php';
+require_once 'inc/views.php';
 
 /**
  * Deprecated
  */
-add_action( 'after_setup_theme', function() {
-	require_once 'functions/company-attribute.php';
-	require_once 'functions/bootstrap-layout.php';
-	require_once 'functions/elements.php';
-	require_once 'functions/bootstrap-compornents.php';
-	require_once 'functions/elements.php';
-} );
-
-/**
- * cusom post type 'event' meta box
- */
-add_action( 'init', function() {
-	register_post_type( 'event', array( 'register_meta_box_cb' => 'event_meta_box' ) );
-} );
+require_once 'functions/company-attribute.php';
+require_once 'functions/elements.php';
 
 function event_meta_box() {
 	$images = get_children( array(
@@ -93,16 +80,4 @@ function event_works_meta_box_cb( $post, $metabox ) {
 </div>
 <input type="button" class="button event-works-attachment-add" data-target="#event-images-<?php echo $slug; ?>" value="Select" />
 <?php
-}
-
-/**
- *
- */
-add_action( 'init', function() {
-	register_post_type( 'attachment', array( 'taxonomies' => array( 'works' ) ) );
-} );
-
-add_filter( 'gallery_style', 'rm_gallery_style' );
-function rm_gallery_style() {
-	return '<div class="wstd-gallery">';
 }

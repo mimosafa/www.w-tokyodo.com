@@ -1,8 +1,4 @@
 <?php
-/*
-Template Name: 事業部トップ
-*/
-
 /**
  * header image
  */
