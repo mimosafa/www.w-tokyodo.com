@@ -1,24 +1,31 @@
 <?php
 /**
+ * Workstore Tokyo Do Theme Root Template
+ *
  * @since 0.0
  */
-get_header();
-do_action( 'wstd_contents_inner_wrapper_open' );
-do_action( 'wstd_contents_top' );
-
+get_header(); ?>
+<div class="row">
+	<div class="col-md-9 col-sm-8">
+<?php
 /**
  * WordPress Loop
  */
 if ( have_posts() ) :
 	while ( have_posts() ) : the_post(); ?>
-<section <?php post_class(); ?>>
-	<?php
-		get_template_part( 'loop' ); ?>
-</section>
+		<section <?php post_class(); ?>>
+<?php
+		if ( ! ( is_division() && is_page_top() ) ) {
+			the_title( '<h2>', '</h2>' );
+		}
+		the_content(); ?>
+		</section>
 <?php
 	endwhile;
-endif;
-do_action( 'wstd_contents_bottom' );
-do_action( 'wstd_get_sidebar' );
-do_action( 'wstd_contents_inner_wrapper_close' );
+endif; ?>
+	</div>
+	<?php
+get_sidebar(); ?>
+</div>
+<?php
 get_footer();

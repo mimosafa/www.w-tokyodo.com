@@ -7,12 +7,26 @@
 
 add_theme_support( 'title-tag' ); // Title Tag
 add_theme_support( 'post-thumbnails' ); // Post Thumbnails
-add_post_type_support( 'page', 'excerpt' ); // Excerpt for Page
 add_action( 'wp_enqueue_scripts', 'wstd_common_enqueue_scripts' ); // Styles & JavaScripts
+
+/**
+ * Remove Rel Links for Page
+ *
+ * @since 0.0
+ */
 add_action( 'template_redirect', function() {
 	if ( is_page() ) {
 		remove_action( 'wp_head', 'adjacent_posts_rel_link_wp_head' );
 	}
+} );
+
+/**
+ * Customize Gallery Style
+ *
+ * @since 0.0
+ */
+add_filter( 'gallery_style', function() {
+	return '<div class="wstd-gallery">';
 } );
 
 /**
