@@ -8,6 +8,7 @@ get_header(); ?>
 <div class="row">
 	<div class="col-md-9 col-sm-8">
 <?php
+wstd_breadcrumb();
 /**
  * WordPress Loop
  */

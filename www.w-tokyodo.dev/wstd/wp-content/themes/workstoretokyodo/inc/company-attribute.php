@@ -3,25 +3,14 @@
 /**
  * Company Attribute Setting - 会社情報の設定画面
  *
+ * @since 0.0
+ *
  * @uses register_setting
  * @uses add_settings_section
  * @uses add_settings_field
  *
  * @link http://www.warna.info/archives/588/ WordPressの設定画面への項目追加方法まとめ
  */
-
-class company_attribute {
-
-	function init() {
-		add_action( 'admin_menu', array( $this, 'add_page' ) );
-	}
-
-	/**
-	 * add menu page
-	 */
-	function add_page() {}
-
-}
 
 // optionテーブルに保存できるようにホワイトリストに追加
 function register_company_attribute_setting() {
